@@ -5,7 +5,7 @@ export interface Listing {
     image: string;
     address: string;
     price: number;
-    numOfGuest: number;
+    numOfGuests: number;
     numOfBeds: number;
     numOfBaths: number;
     rating: number;

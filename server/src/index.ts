@@ -1,5 +1,6 @@
 require("dotenv").config();
 import express, {Application} from "express";
+import cors from "cors"
 import {ApolloServer} from "apollo-server-express";
 import {typeDefs, resolvers} from "./graphql"; 
 import {connectDatabase} from "./database/";
@@ -14,6 +15,7 @@ const mount = async (app : Application) =>{
     const server = new ApolloServer({typeDefs, resolvers, context: () =>({db})});
     server.applyMiddleware({app, path: "/api"})
     
+    app.use(cors());
     app.use(express.json());
     
     app.listen(process.env.PORT,() => console.log(`Server started on: http://localhost:${process.env.PORT}`));
