@@ -13,6 +13,7 @@ export const listingResolvers: IResolvers = {
     Mutation: {
         deleteListing: async (_root: undefined, {id} : {id: string}, {db}:{db: Database}
             ): Promise<Listing> => {
+            
             const deleteHotel = await db.listings.findOneAndDelete({
                 _id: new ObjectId(id)
             })

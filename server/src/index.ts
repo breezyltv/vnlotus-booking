@@ -19,8 +19,8 @@ const mount = async (app : Application) =>{
     app.use(express.json());
     
     app.listen(process.env.PORT,() => console.log(`Server started on: http://localhost:${process.env.PORT}`));
-    const list = await db.listings.find({}).toArray();
-    console.log(list);
+    //const list = await db.listings.find({}).toArray();
+    //console.log(list);
     
 };
 

@@ -7,10 +7,10 @@ export const typeDefs = gql`
         image: String!
         address: String!
         price: Int!
-        numOfGuest: Int!
+        numOfGuests: Int!
         numOfBeds: Int!
         numOfBaths: Int!
-        rating: Int!
+        rating: Float!
     }
     type Query {
         listings: [Listing!]!
