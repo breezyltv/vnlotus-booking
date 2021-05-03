@@ -1,16 +1,125 @@
-import { Collection, ObjectId} from "mongodb"
-export interface Listing {
-    _id: ObjectId;
-    title: string;
-    image: string;
-    address: string;
-    price: number;
-    numOfGuests: number;
-    numOfBeds: number;
-    numOfBaths: number;
-    rating: number;
+import { Collection, ObjectId } from "mongodb";
+
+export enum RoomType {
+  Apartment = "APARTMENT",
+  House = "HOUSE",
+  Villa = "VILLA",
+  Resort = "RESORT",
+  Hotel = "HOTEL",
+  Homestay = "HOMESTAY",
+}
+
+export interface BookingsIndexMonth {
+  [key: string]: boolean;
+}
+
+export interface BookingsIndexYear {
+  [key: string]: BookingsIndexMonth;
+}
+export interface BookingsIndex {
+  [key: string]: BookingsIndexYear;
+}
+
+export interface Room {
+  _id: ObjectId;
+  admin: string;
+  host: string;
+  title: string;
+  description: string;
+  type: RoomType;
+  image: Pictures;
+  address: string;
+  country: string;
+  city: string;
+  bookings: ObjectId[];
+  bookingsIndex: BookingsIndex;
+  price: number;
+  numOfGuests: number;
+  numOfBeds: number;
+  numOfBaths: number;
+  rating: number;
+}
+
+export interface Pictures {
+  main: string;
+  collection?: string[];
+}
+
+export interface Booking {
+  _id: ObjectId;
+  room: ObjectId;
+  tenant: string;
+  checkIn: string;
+  checkOut: string;
+}
+export interface User {
+  _id: string;
+  token: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
+  contact: string;
+  walletId?: string;
+  income: number;
+  bookings: ObjectId[];
+  rooms: ObjectId[];
+}
+
+export interface Profile {
+  _id: ObjectId;
+  date: Date;
+  handle: string;
+  phone: string;
+  email: string;
+  bio: string;
+  status: string;
+  location: string;
+  github: string;
+  position: string;
+  skills: Skills;
+  social: SocialObject;
+  projects: ProjectType[];
+  education: EducationType[];
+}
+
+type SocialObject = {
+  [key: string]: string;
+};
+
+export interface EducationType {
+  _id: ObjectId;
+  school: string;
+  major: string;
+  from: Date;
+  to: Date;
+  description: string;
+}
+
+export interface ProjectType {
+  _id: ObjectId;
+  title: string;
+  github_link: string;
+  description: string;
+  from: Date;
+  feature: string;
+}
+
+export interface Skills {
+  frameworks: SkillsType[];
+  languages: SkillsType[];
+  tools: SkillsType[];
+}
+
+export interface SkillsType {
+  _id: ObjectId;
+  title: string;
+  level: number;
+  status: boolean;
 }
 
 export interface Database {
-    listings: Collection<Listing>;
+  bookings: Collection<Booking>;
+  rooms: Collection<Room>;
+  users: Collection<User>;
+  profile: Collection<Profile>;
 }

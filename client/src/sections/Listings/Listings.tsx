@@ -1,6 +1,9 @@
-import {useQuery, useMutation} from "../../lib/api";
-import {ListingsData, DeleteHotel, DeleteHotelVariables} from "./types";
-const HOTELS = `
+import {useQuery, useMutation} from "react-apollo";
+import {gql} from "apollo-boost"
+import {Listings as ListingsData} from "./__generated__/Listings"
+import {DeleteHotel as DeleteHotel, DeleteHotelVariables} from "./__generated__/DeleteHotel"
+
+const HOTELS = gql`
     query Listings {
         listings {
             id
@@ -16,7 +19,7 @@ const HOTELS = `
     }
 `
 // remember that passes a param by using mongoDb schema
-const DELETE_HOTEL = `
+const DELETE_HOTEL = gql`
     mutation DeleteHotel($id: ID!){
         deleteListing(id: $id){
             id
@@ -41,7 +44,7 @@ export const Listings = ({title}: Props) => {
     const [deleteHotel, {loading: deleteHotelLoading, error: deleteHotelError}] = useMutation<DeleteHotel, DeleteHotelVariables>(DELETE_HOTEL);
     
     const handleDeleteHotel = async (id: string) =>{
-        await deleteHotel({id})
+        await deleteHotel({variables: {id}})
         refetch();
     }
     const showHotels = hotels ? (<ul>{hotels.map(hotel=>{

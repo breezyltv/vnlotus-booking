@@ -1,0 +1,48 @@
+:root {
+  --color-white: #ffffff;
+  --color-light: #f1f5f9;
+  --color-black: #121212;
+  --color-night: #001632;
+  --color-red: #ff4757;
+  --color-blue: #34ace0;
+  --color-green: #00b894;
+  --drk-green: #20bf6b;
+  --drk-blue: #1b9cfc;
+  --color-gray: #ced6e0;
+  --color-grayish: #dadce0;
+  --main-color: #f78fb3;
+  --main-text-color: #2c2c54;
+  --shadow-normal: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  box-shadow: 0 0 0 2px rgba(238, 167, 15, 0.2);
+}
+@media (max-width: 767px) {
+  .resume-intro .ant-typography {
+    margin-top: 20px;
+    font-size: 0.75rem;
+    text-align: justify;
+  }
+  .resume-contact {
+    border: 0;
+    padding-left: 0px;
+    margin-top: 20px;
+  }
+  .site-layout-content {
+    padding: 15px;
+  }
+  .ant-layout-content {
+    padding: 0 20px !important;
+  }
+
+  .resume-aside {
+    border: none;
+    padding: 0;
+  }
+}
