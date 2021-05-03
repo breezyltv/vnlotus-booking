@@ -1,0 +1,35 @@
+require("dotenv").config();
+
+import { connectDatabase } from "../src/database";
+
+const clear = async () => {
+  try {
+    console.log("[clear] : running...");
+
+    const db = await connectDatabase();
+
+    const bookings = await db.bookings.find({}).toArray();
+    const rooms = await db.rooms.find({}).toArray();
+    const users = await db.users.find({}).toArray();
+
+    if (bookings.length > 0) {
+      await db.bookings.drop();
+    }
+
+    if (rooms.length > 0) {
+      await db.rooms.drop();
+    }
+
+    if (users.length > 0) {
+      await db.users.drop();
+    }
+
+    console.log("[clear] : success");
+  } catch {
+    throw new Error("[APP]: Failed to clear database");
+  } finally {
+    process.exit();
+  }
+};
+
+clear();

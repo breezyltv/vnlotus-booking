@@ -1,31 +1,41 @@
-import {IResolvers} from "apollo-server-express";
+import { IResolvers } from "apollo-server-express";
 import { ObjectId } from "bson";
-import { Database, Listing } from "../../../lib/types";
-
+import { profile } from "node:console";
+import { Database, Room, Profile, SkillsType } from "../../../lib/types";
 
 export const listingResolvers: IResolvers = {
-    Query: {
-        listings: async (_root: undefined, _args: {}, {db}:{db: Database}
-            ) : Promise<Listing[]> =>{
-            return await db.listings.find({}).toArray();
-        } 
+  Query: {
+    listings: async (
+      _root: undefined,
+      _args: {},
+      { db }: { db: Database }
+    ): Promise<Room[]> => {
+      return await db.rooms.find({}).toArray();
     },
-    Mutation: {
-        deleteListing: async (_root: undefined, {id} : {id: string}, {db}:{db: Database}
-            ): Promise<Listing> => {
-            
-            const deleteHotel = await db.listings.findOneAndDelete({
-                _id: new ObjectId(id)
-            })
-            if(!deleteHotel.value){
-                throw new Error("Failed to delete hotel");
-
-            }
-            return deleteHotel.value;
-        }
+    profile: async (
+      _root: undefined,
+      _args: {},
+      { db }: { db: Database }
+    ): Promise<Profile[]> => {
+      return await db.profile.find({}).toArray();
     },
-    Listing: {
-        id:  (listing: Listing) : string => listing._id.toHexString(),
-        title: (listing: Listing) : String => listing.title,
-    }
+  },
+  Mutation: {
+    deleteListing: async (
+      _root: undefined,
+      { id }: { id: string },
+      { db }: { db: Database }
+    ): Promise<Room> => {
+      const deleteHotel = await db.rooms.findOneAndDelete({
+        _id: new ObjectId(id),
+      });
+      if (!deleteHotel.value) {
+        throw new Error("Failed to delete hotel");
+      }
+      return deleteHotel.value;
+    },
+  },
+  Profile: {
+    id: (profile: Profile): string => profile._id.toHexString(),
+  },
 };
