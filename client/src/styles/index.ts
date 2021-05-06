@@ -1,6 +1,6 @@
 import styled, { createGlobalStyle } from "styled-components";
 import "antd/dist/antd.css";
-import { Input, Button } from "antd";
+import { Input, Button, Layout, Spin } from "antd";
 export const colorSchemes = {
   "color-white": "#ffffff",
   "color-light": "#f5f6fa",
@@ -44,13 +44,27 @@ export const GlobalStyle = createGlobalStyle`
     } */
 `;
 
-export const Container = styled.main`
+export const Container = styled(Layout.Content)`
   max-width: calc(1296px + 5.6rem);
   margin: auto;
 `;
 export const ContainerMd = styled(Container)`
   max-width: calc(1520px + 5.6rem);
 `;
+
+export const ContentSpinner = styled(Container)`
+  height: 70vh;
+`;
+
+export const SpinnerStyled = styled(Spin)`
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  /* The translate value for transform is based off the size of the element, so that will center nicely */
+  transform: translate(-50%, -50%);
+  color: ${colorSchemes["main-text-color"]};
+`;
+
 export const CustomInput = styled(Input)`
   border-radius: 3rem;
   padding: 8px 20px;

@@ -1,7 +1,7 @@
 import { IResolvers } from "apollo-server-express";
 import { ObjectId } from "bson";
-import { profile } from "node:console";
-import { Database, Room, Profile, SkillsType } from "../../../lib/types";
+
+import { Database, Room, Profile } from "../../../lib/types";
 
 export const listingResolvers: IResolvers = {
   Query: {

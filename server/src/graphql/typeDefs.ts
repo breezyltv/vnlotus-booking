@@ -64,12 +64,26 @@ export const typeDefs = gql`
     level: Int
     status: Boolean
   }
+  type Viewer {
+    id: ID
+    token: String
+    displayName: String
+    avatar: String
+    hasWallet: Boolean
+    didRequest: Boolean!
+  }
+  input SignInInput {
+    code: String!
+  }
 
   type Query {
+    authUrl: String!
     listings: [Listing!]!
     profile: [Profile!]!
   }
   type Mutation {
+    signIn(input: SignInInput): Viewer!
+    signOut: Viewer!
     deleteListing(id: ID!): Listing!
   }
 `;

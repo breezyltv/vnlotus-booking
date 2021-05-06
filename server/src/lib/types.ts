@@ -9,6 +9,11 @@ export enum RoomType {
   Homestay = "HOMESTAY",
 }
 
+export enum LoginProvider {
+  Email = "EMAIL",
+  Google = "GOOGLE",
+}
+
 export interface BookingsIndexMonth {
   [key: string]: boolean;
 }
@@ -55,8 +60,10 @@ export interface Booking {
 export interface User {
   _id: string;
   token: string;
-  first_name: string;
-  last_name: string;
+  provider: LoginProvider;
+  displayName: string;
+  first_name: string | null | undefined;
+  last_name: string | null | undefined;
   avatar: string;
   contact: string;
   walletId?: string;
@@ -115,6 +122,14 @@ export interface SkillsType {
   title: string;
   level: number;
   status: boolean;
+}
+
+export interface Viewer {
+  _id?: string;
+  token?: string;
+  avatar?: string;
+  walletId?: string;
+  didRequest: boolean;
 }
 
 export interface Database {

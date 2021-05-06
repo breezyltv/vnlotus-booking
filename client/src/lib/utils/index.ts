@@ -1,3 +1,23 @@
+import { message, notification } from "antd";
+
+export const displaySuccessNotification = (
+  message: string,
+  description?: string
+) => {
+  return notification["success"]({
+    message,
+    description,
+    placement: "topRight",
+    style: {
+      marginTop: 50,
+    },
+  });
+};
+
+export const displayErrorMessage = (error: string) => {
+  return message.error(error);
+};
+
 export const domains = [
   "gmail.com",
   "aol.com",
@@ -64,6 +84,7 @@ export const popularLanguages = [
 
 export const popularTools = [
   "Docker",
+  "Apollographql",
   "Kubernetes",
   "Postman",
   "Github",

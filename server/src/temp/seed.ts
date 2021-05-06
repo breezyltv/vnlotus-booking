@@ -1,7 +1,7 @@
 require("dotenv").config();
 import { ObjectId } from "mongodb";
-import { connectDatabase } from "../src/database";
-import { Room, RoomType, User } from "../src/lib/types";
+import { connectDatabase } from "../database";
+import { Room, RoomType, User } from "../lib/types";
 
 const seed = async () => {
   try {

@@ -116,7 +116,7 @@ export const ResumeSectionHeading = styled.div`
 `;
 
 export const ResumeLangInfo = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   .ant-typography svg {
     margin-right: 6px;
   }
@@ -147,7 +147,9 @@ export const ResumeAside = styled.aside`
 
 export const ResumeTimeline = styled.div`
   margin-top: 30px;
-
+  .ant-typography {
+    font-size: 12pt;
+  }
   a {
     color: ${colorSchemes["main-color"]};
   }
@@ -156,7 +158,7 @@ export const ResumeTimeline = styled.div`
   }
 `;
 
-export const ResumeSocialList = styled(Row)`
+export const ResumeSocialList = styled.div`
   //background-color: ${colorSchemes["second-main-color"]};
   text-align: center;
   padding: 0 4rem 3rem 4rem;

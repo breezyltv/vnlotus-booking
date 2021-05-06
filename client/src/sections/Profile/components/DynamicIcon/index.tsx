@@ -74,6 +74,7 @@ import {
   Visualstudiocode,
   Flutter,
   Graphql,
+  Apollographql,
 } from "@styled-icons/simple-icons";
 import { StyledIcon } from "@styled-icons/styled-icon";
 
@@ -131,6 +132,7 @@ const popularLanguages: category = {
 
 const popularTools: category = {
   Docker: Docker,
+  Apollographql: Apollographql,
   Kubernetes: Kubernetes,
   Postman: Postman,
   Github: Github,

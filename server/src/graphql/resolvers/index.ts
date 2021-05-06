@@ -1,4 +1,5 @@
 import merge from "lodash.merge";
-import {listingResolvers} from "./Listing/resolvers";
+import { viewerResolvers } from "./Viewer";
+import { profileResolvers } from "./Profile";
 
-export const resolvers = merge(listingResolvers);
+export const resolvers = merge(viewerResolvers, profileResolvers);

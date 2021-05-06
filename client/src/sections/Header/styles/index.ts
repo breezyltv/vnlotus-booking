@@ -2,8 +2,12 @@ import styled from "styled-components";
 import { ContainerMd, colorSchemes } from "../../../styles";
 
 export const MenuDiv = styled.div`
+  background-color: #fff;
   border-bottom: solid 1px #e8e8e8;
   box-shadow: 0 0 30px #f3f1f1;
+  @media (max-width: 767px) {
+    padding-bottom: 1rem;
+  }
 `;
 
 export const Nav = styled(ContainerMd)`
@@ -20,6 +24,10 @@ export const Nav = styled(ContainerMd)`
     flex-direction: column;
     padding: 0 0 10px 0;
   }
+`;
+
+export const SearchNav = styled.div`
+  align-self: center;
 `;
 
 export const Logo = styled.div`
@@ -58,6 +66,7 @@ export const NavSubMenu = styled.div`
     padding: 10px 20px;
   }
   .ant-menu-horizontal {
+    line-height: 35px;
     border-bottom: none;
   }
   .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover,
@@ -79,9 +88,7 @@ export const NavSubMenu = styled.div`
   .leftMenu {
     flex-grow: 1;
   }
-  .rightMenu {
-    align-self: flex-end;
-  }
+
   .barsMenu {
     float: right;
     padding: 0 10px;
@@ -99,5 +106,24 @@ export const NavSubMenu = styled.div`
     .rightMenu {
       display: none;
     }
+  }
+`;
+
+export const MenuUserLink = styled.a`
+  //font-size: 0.875rem;
+  background: #f6f6f6;
+  //padding: 0.3125rem 1.75rem 0.3125rem 0.3125rem;
+  padding: 0 10px;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    margin: 2px;
+  }
+  span:last-child {
+    margin-right: 0;
+    margin-top: 3px;
   }
 `;

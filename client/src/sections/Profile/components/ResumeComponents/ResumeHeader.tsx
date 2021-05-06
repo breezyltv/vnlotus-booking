@@ -11,8 +11,8 @@ import {
   ResumeTagLine,
   ResumeContact,
 } from "../styles";
-import { upperFirstChar, upperCaseString } from "../../../../lib/utils/util";
-import { Profile_profile as Profile } from "../../__generated__/Profile";
+import { upperFirstChar, upperCaseString } from "../../../../lib/utils";
+import { Profile_profile as Profile } from "../../../../lib/api";
 const { Text } = Typography;
 
 interface Props {

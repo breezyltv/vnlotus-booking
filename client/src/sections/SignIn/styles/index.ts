@@ -1,9 +1,21 @@
 import styled from "styled-components";
 import { colorSchemes, Container } from "../../../styles";
-import { Card } from "antd";
+import { Card, Spin } from "antd";
 
 export const LoginContainer = styled(Container)`
   padding: 0 1rem;
+`;
+export const ContentSpinner = styled(Container)`
+  height: 70vh;
+`;
+
+export const SpinnerStyled = styled(Spin)`
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  /* The translate value for transform is based off the size of the element, so that will center nicely */
+  transform: translate(-50%, -50%);
+  color: ${colorSchemes["main-text-color"]};
 `;
 
 export const LoginHeader = styled.div`

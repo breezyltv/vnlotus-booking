@@ -1,4 +1,4 @@
-import { SearchNav } from "../styles";
+import { SearchNav } from "../../styles";
 import { Input, Menu, Button, Dropdown } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 

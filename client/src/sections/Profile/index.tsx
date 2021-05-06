@@ -1,59 +1,15 @@
 import { useQuery, useMutation } from "react-apollo";
-import { gql } from "apollo-boost";
-import { Profile as ProfileData } from "./__generated__/Profile";
+
+import { Profile as ProfileData, PROFILE } from "../../lib/api/graphql/queries";
 import {
   ResumeHeader,
   ResumeIntro,
   ResumeSkills,
   ResumeExp,
   ResumeSocial,
+  ResumeMain,
 } from "./components";
 import { Row, Col, Skeleton } from "antd";
-import { ResumeMain } from "./components";
-
-const PROFILE = gql`
-  query Profile {
-    profile {
-      id
-      handle
-      avatar
-      phone
-      email
-      bio
-      status
-      location
-      github
-      position
-      social
-      skills {
-        languages {
-          title
-        }
-        frameworks {
-          title
-          level
-        }
-        tools {
-          title
-        }
-      }
-      projects {
-        title
-        github_link
-        description
-        from
-        feature
-      }
-      education {
-        school
-        major
-        from
-        to
-        description
-      }
-    }
-  }
-`;
 
 export const Profile = () => {
   const { data, refetch, loading, error } = useQuery<ProfileData>(PROFILE);

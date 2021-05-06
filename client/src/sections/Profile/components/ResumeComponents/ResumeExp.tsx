@@ -1,6 +1,6 @@
 import { Typography, Divider, Col, Space, Timeline } from "antd";
-import { upperFirstChar, upperCaseString } from "../../../../lib/utils/util";
-import { Profile_profile as Profile } from "../../__generated__/Profile";
+import { upperFirstChar, upperCaseString } from "../../../../lib/utils";
+import { Profile_profile as Profile } from "../../../../lib/api";
 import { ResumeSectionHeading, ResumeTimeline, ResumeExpRow } from "../styles";
 import { colorSchemes } from "../../../../styles";
 import moment from "moment";
