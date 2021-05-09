@@ -69,13 +69,25 @@ export const typeDefs = gql`
     total: Int!
     result: [Room!]!
   }
+  enum Gender {
+    Male
+    Female
+    Other
+  }
 
   type User {
     id: ID!
     provider: LoginType!
-    name: String!
+    displayName: String!
+    first_name: String!
+    last_name: String!
     avatar: String!
     contact: String!
+    phone: String
+    address: String
+    birthday: Date
+    gender: Gender
+    bio: String
     hasWallet: Boolean!
     income: Int
     bookings(limit: Int!, page: Int!): Bookings

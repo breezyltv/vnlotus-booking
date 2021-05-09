@@ -54,7 +54,7 @@ const signInViaGoogle = async (
     { _id: userId },
     {
       $set: {
-        name: userName,
+        displayName: userName,
         avatar: userAvatar,
         contact: userEmail,
         token,
