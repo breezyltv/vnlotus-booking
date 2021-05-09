@@ -57,6 +57,13 @@ export interface Booking {
   checkIn: string;
   checkOut: string;
 }
+
+export enum Gender {
+  male = "Male",
+  female = "Female",
+  other = "Other",
+}
+
 export interface User {
   _id: string;
   token: string;
@@ -66,10 +73,16 @@ export interface User {
   last_name: string | null | undefined;
   avatar: string;
   contact: string;
+  phone?: string;
+  address?: string;
+  birthday?: Date;
+  gender?: Gender;
+  bio?: string;
   walletId?: string;
   income: number;
   bookings: ObjectId[];
   rooms: ObjectId[];
+  authorized?: boolean;
 }
 
 export interface Profile {
