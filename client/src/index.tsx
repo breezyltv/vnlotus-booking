@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom";
-import { Layout, Affix } from "antd";
+import { Layout, Affix, BackTop } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ApolloClient from "apollo-boost";
@@ -15,6 +15,7 @@ import {
   NotFound,
   User,
   SignIn,
+  SignUp,
   Profile,
   Footer,
 } from "./sections";
@@ -121,6 +122,14 @@ const App = () => {
             <SignIn {...props} viewer={viewer} setViewer={setViewer} />
           )}
         />
+        <Route
+          exact
+          path="/signup"
+          render={(props) => (
+            <SignUp {...props} viewer={viewer} setViewer={setViewer} />
+          )}
+        />
+
         <Route exact path="/about" component={Profile} />
         <Route component={NotFound} />
       </Switch>
@@ -134,6 +143,7 @@ ReactDOM.render(
     <ApolloProvider client={client}>
       <Layout style={{ background: "#fff" }}>
         <App />
+        <BackTop />
       </Layout>
     </ApolloProvider>
   </React.StrictMode>,

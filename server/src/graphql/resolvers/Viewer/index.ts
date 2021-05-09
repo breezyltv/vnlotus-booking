@@ -1,12 +1,6 @@
 import crypto from "crypto";
 import { IResolvers } from "apollo-server-express";
-import {
-  Database,
-  Profile,
-  Viewer,
-  User,
-  LoginProvider,
-} from "../../../lib/types";
+import { Database, Viewer, User, LoginProvider } from "../../../lib/types";
 import { Google } from "../../../lib/api/Google";
 import { SignInArgs } from "./types";
 import { Response, Request } from "express";
@@ -85,7 +79,7 @@ const signInViaGoogle = async (
     });
     viewer = insertResult.ops[0];
   }
-
+  //set user id to cookie
   res.cookie("viewer", userId, {
     ...cookieOpts,
     maxAge: 365 * 24 * 60 * 60 * 1000,
@@ -131,8 +125,9 @@ export const viewerResolvers: IResolvers = {
     ) => {
       try {
         const code = input ? input.code : null;
-
+        //create token every time sign in
         const token = crypto.randomBytes(16).toString("hex");
+
         const viewer = code
           ? await signInViaGoogle(code, token, db, res)
           : await signInViaCookie(token, db, req, res);

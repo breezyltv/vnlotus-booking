@@ -5,6 +5,7 @@ export * from "./Home";
 export * from "./Host";
 export * from "./User";
 export * from "./SignIn";
+export * from "./SignUp";
 export * from "./Profile";
 export * from "./Footer";
 export * from "./NotFound";

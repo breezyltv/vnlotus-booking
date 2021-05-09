@@ -62,7 +62,7 @@ export const RightNav = ({ mode, viewer, setViewer }: Props) => {
   const subRightMenu =
     viewer.id && viewer.avatar ? (
       <>
-        <Menu.Item key="signUp">
+        <Menu.Item key="setting">
           <Dropdown
             overlay={settingMenu}
             trigger={["click"]}

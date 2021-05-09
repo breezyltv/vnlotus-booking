@@ -16,6 +16,72 @@ export const typeDefs = gql`
 
   scalar Object
 
+  type Booking {
+    id: ID!
+    room: Room!
+    tenant: User!
+    checkIn: String!
+    checkOut: String!
+  }
+
+  type Bookings {
+    total: Int!
+    result: [Booking!]!
+  }
+
+  enum RoomType {
+    APARTMENT
+    HOUSE
+    VILLA
+    RESORT
+    HOTEL
+    HOMESTAY
+  }
+
+  enum LoginType {
+    GOOGLE
+    EMAIL
+  }
+
+  type Pictures {
+    main: String!
+    collection: [String!];
+  }
+
+  type Room {
+    id: ID!
+    title: String!
+    description: String!
+    image: Pictures
+    host: User!
+    type: RoomType!
+    address: String!
+    city: String!
+    bookings(limit: Int!, page:Int!): Bookings
+    bookingsIndex: String!
+    price: Int!
+    numOfBaths:Int!
+    numOfBeds: Int!
+    numOfGuests: Int!
+  }
+
+  type Rooms{
+    total: Int!
+    result: [room!]!
+  }
+
+  type User {
+    id: ID!
+    provider: LoginType!
+    name: String!
+    avatar: String!
+    contact: String!
+    hasWallet: Boolean!
+    income: Int
+    bookings(limit: Int!, page: Int!): Bookings
+    rooms(limit: Int!, page: Int!): Rooms!
+  }
+
   type Profile {
     id: ID!
     date: Date
@@ -80,6 +146,7 @@ export const typeDefs = gql`
     authUrl: String!
     listings: [Listing!]!
     profile: [Profile!]!
+    user(id: ID!): User!
   }
   type Mutation {
     signIn(input: SignInInput): Viewer!
