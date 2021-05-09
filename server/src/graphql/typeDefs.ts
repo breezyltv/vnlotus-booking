@@ -45,7 +45,7 @@ export const typeDefs = gql`
 
   type Pictures {
     main: String!
-    collection: [String!];
+    collection: [String!]
   }
 
   type Room {
@@ -57,17 +57,17 @@ export const typeDefs = gql`
     type: RoomType!
     address: String!
     city: String!
-    bookings(limit: Int!, page:Int!): Bookings
+    bookings(limit: Int!, page: Int!): Bookings
     bookingsIndex: String!
     price: Int!
-    numOfBaths:Int!
+    numOfBaths: Int!
     numOfBeds: Int!
     numOfGuests: Int!
   }
 
-  type Rooms{
+  type Rooms {
     total: Int!
-    result: [room!]!
+    result: [Room!]!
   }
 
   type User {
