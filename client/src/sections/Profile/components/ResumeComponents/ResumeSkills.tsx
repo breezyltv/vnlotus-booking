@@ -1,5 +1,5 @@
 import { Typography, Col, Space, Divider, Progress, Tag } from "antd";
-import { Profile_profile as Profile } from "../../__generated__/Profile";
+import { Profile_profile as Profile } from "../../../../lib/api";
 import { DynamicIcon } from "../DynamicIcon";
 import {
   ResumeSkill,

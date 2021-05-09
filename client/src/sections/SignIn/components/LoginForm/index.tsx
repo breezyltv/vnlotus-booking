@@ -9,8 +9,10 @@ import {
 import { LoginCard, LoginHeader, LoginMeta } from "../../styles";
 import { MailOutlined, LockOutlined, GoogleOutlined } from "@ant-design/icons";
 const { Title, Text } = Typography;
-
-export const LoginForm = () => {
+interface Props {
+  handleAuthorizeViaGoogle: () => void;
+}
+export const LoginForm = ({ handleAuthorizeViaGoogle }: Props) => {
   return (
     <LoginCard>
       <LoginHeader>
@@ -52,7 +54,12 @@ export const LoginForm = () => {
         </Space>
       </LoginMeta>
       <Divider>Or</Divider>
-      <CustomButtonGoogle icon={<GoogleOutlined />} size="large" block>
+      <CustomButtonGoogle
+        icon={<GoogleOutlined />}
+        size="large"
+        block
+        onClick={handleAuthorizeViaGoogle}
+      >
         Sign In with Google
       </CustomButtonGoogle>
     </LoginCard>

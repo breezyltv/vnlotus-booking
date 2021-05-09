@@ -1,6 +1,6 @@
 import { Typography, Divider, Avatar, Image, Col } from "antd";
 import { ResumeIntroStyled, ResumeIntroRow } from "../styles";
-import { Profile_profile as Profile } from "../../__generated__/Profile";
+import { Profile_profile as Profile } from "../../../../lib/api";
 import { UserOutlined } from "@ant-design/icons";
 const { Paragraph } = Typography;
 interface Props {

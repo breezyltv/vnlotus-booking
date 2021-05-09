@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react";
 
 export const User = () => {
-    return (
-        <div>
-            <h2>User</h2>
-        </div>
-    )
-}
+  return (
+    <div>
+      <h2>Welcome You to Lotus Homestay</h2>
+    </div>
+  );
+};
