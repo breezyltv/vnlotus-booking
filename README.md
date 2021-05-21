@@ -4,7 +4,7 @@
 
 ## Features:
 
-- Written in Typescript from font end to back end.
+- Written in Typescript from front end to back end.
 
 ### Database:
 
