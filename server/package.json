@@ -15,6 +15,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/graphql-iso-date": "^3.4.0",
+    "@types/yup": "^0.29.11",
     "apollo-server-express": "^2.22.2",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -22,8 +24,10 @@
     "express": "^4.17.1",
     "googleapis": "^73.0.0",
     "graphql": "^15.5.0",
+    "graphql-iso-date": "^3.6.1",
     "lodash.merge": "^4.6.2",
-    "mongodb": "^3.6.6"
+    "mongodb": "^3.6.6",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",

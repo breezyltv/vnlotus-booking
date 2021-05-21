@@ -30,10 +30,29 @@ export interface Profile_profile_skills {
   tools: Profile_profile_skills_tools[];
 }
 
+export interface Profile_profile_projects {
+  __typename: "ProjectType";
+  title: string;
+  github_link: string;
+  description: string;
+  from: any | null;
+  feature: string;
+}
+
+export interface Profile_profile_education {
+  __typename: "EducationType";
+  school: string;
+  major: string;
+  from: any | null;
+  to: any | null;
+  description: string | null;
+}
+
 export interface Profile_profile {
   __typename: "Profile";
+  id: string;
   handle: string;
-  avatar: string;
+  avatar: string | null;
   phone: string;
   email: string;
   bio: string;
@@ -43,24 +62,8 @@ export interface Profile_profile {
   position: string | null;
   social: any | null;
   skills: Profile_profile_skills;
-  projects: ProjectType[];
-  education: EducationType[];
-}
-
-export interface ProjectType {
-  title: string;
-  github_link: string;
-  description: string;
-  from: Date;
-  feature: string;
-}
-
-export interface EducationType {
-  school: string;
-  major: string;
-  from: Date;
-  to: Date | null;
-  description: string;
+  projects: Profile_profile_projects[];
+  education: Profile_profile_education[];
 }
 
 export interface Profile {

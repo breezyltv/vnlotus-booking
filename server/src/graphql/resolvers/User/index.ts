@@ -1,14 +1,20 @@
 import { IResolvers } from "apollo-server-express";
-import { Database, User } from "../../../lib/types";
-import { authorize } from "../../../lib/utils";
+//import { UserInputError } from 'apollo-server';
+import * as yup from "yup";
+import { Database, User, YupError } from "../../../lib/types";
+import { authorize, formatYupError } from "../../../lib/utils";
 import {
   UserArgs,
+  UserUpdateArgs,
+  UserUpdateReturnType,
   UserBookingArgs,
   UserBookingsData,
   UserRoomsArgs,
   UserRoomsData,
 } from "./types";
 import { Request } from "express";
+import { UserUpdateRules } from "../../../lib/validations/userValid";
+
 export const userResolvers: IResolvers = {
   Query: {
     user: async (
@@ -30,6 +36,63 @@ export const userResolvers: IResolvers = {
       } catch (error) {
         throw new Error(`Failed to query user: ${error}`);
       }
+    },
+  },
+  Mutation: {
+    updateUser: async (
+      _root: undefined,
+      { user }: UserUpdateArgs,
+      { db, req }: { db: Database; req: Request }
+    ): Promise<UserUpdateReturnType> => {
+      console.log(user);
+
+      const birthday =
+        user.birthday &&
+        new Date(user.birthday).valueOf() > new Date(1940, 0, 1).valueOf()
+          ? user.birthday
+          : null;
+
+      try {
+        await UserUpdateRules.validate(user, { abortEarly: false });
+      } catch (error) {
+        if (error instanceof yup.ValidationError) {
+          console.log("yup errors", formatYupError(error));
+          return {
+            data: null,
+            errors: formatYupError(error),
+          };
+        } else {
+          console.log("graphql errors");
+          throw error;
+        }
+      }
+
+      const updateResult = await db.users.findOneAndUpdate(
+        {
+          _id: user._id,
+        },
+        {
+          $set: {
+            first_name: user.first_name,
+            last_name: user.last_name,
+            phone: user.phone,
+            address: user.address,
+            birthday: birthday,
+            gender: user.gender,
+            bio: user.bio,
+          },
+        },
+        { returnOriginal: false }
+      );
+      if (!updateResult.value) {
+        throw new Error("Failed to update user profile");
+      }
+      console.log(updateResult.value);
+
+      return {
+        data: updateResult.value,
+        errors: null,
+      };
     },
   },
   User: {

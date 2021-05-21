@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { Row, Col } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { LoginContainer, SpinnerStyled, ContentSpinner } from "./styles";
@@ -29,7 +29,6 @@ interface Props {
   setViewer: (viewer: Viewer) => void;
 }
 export const SignIn = ({ viewer, setViewer }: Props) => {
-  const history = useHistory();
   const client = useApolloClient();
   const [
     signIn,

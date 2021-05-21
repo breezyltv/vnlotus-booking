@@ -8,8 +8,6 @@ import {
   SolutionOutlined,
   ShopOutlined,
   CaretDownOutlined,
-  CalendarOutlined,
-  SettingOutlined,
 } from "@ant-design/icons";
 import { Menu, Avatar, Dropdown } from "antd";
 import { MenuUserLink } from "../../styles";
@@ -21,6 +19,8 @@ import {
   SIGN_OUT,
   SignOut as SignOutData,
 } from "../../../../lib/api/graphql/mutations";
+
+import { AccountMenuSub } from "../AccountMenuSub";
 
 interface Props {
   mode: boolean;
@@ -48,32 +48,19 @@ export const RightNav = ({ mode, viewer, setViewer }: Props) => {
     signOut();
   };
 
-  const settingMenu = (
-    <Menu>
-      <Menu.Item key="0" icon={<CalendarOutlined />}>
-        My Bookings
-      </Menu.Item>
-      <Menu.Item key="1" icon={<SettingOutlined />}>
-        <Link to={`/user/${viewer.id}`}>Account Setting</Link>
-      </Menu.Item>
-    </Menu>
-  );
-
   const subRightMenu =
     viewer.id && viewer.avatar ? (
       <>
         <Menu.Item key="setting">
           <Dropdown
-            overlay={settingMenu}
+            overlay={<AccountMenuSub mode={"vertical"} />}
             trigger={["click"]}
             placement="bottomRight"
             arrow
           >
             <MenuUserLink onClick={(e) => e.preventDefault()}>
               <Avatar size="small" src={viewer.avatar} />
-              <span>
-                {viewer.displayName && upperCaseString(viewer.displayName)}
-              </span>
+              <span>{upperCaseString(viewer.displayName)}</span>
               <CaretDownOutlined />
             </MenuUserLink>
           </Dropdown>

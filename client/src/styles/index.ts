@@ -22,6 +22,7 @@ export const colorSchemes = {
   "shadow-medium":
     "0 9px 46px 8px rgba(0,0,0,.02),0 24px 38px 3px rgba(0,0,0,.04),0 11px 15px -7px rgba(0,0,0,.05)",
   "shadow-large": "0 1rem 3rem rgba(0, 0, 0, 0.175)",
+  "banner-color": "linear-gradient(90deg, #ffa801, #ffc048 51%, #ffa801)",
 };
 
 export const GlobalStyle = createGlobalStyle`
@@ -102,7 +103,7 @@ export const CustomButton = styled(Button)`
 `;
 
 export const CustomButtonDefault = styled(Button)`
-  border-radius: 3rem;
+  color: ${colorSchemes["main-color"]};
   :hover {
     color: ${colorSchemes["main-color"]};
     border-color: ${colorSchemes["main-color"]};

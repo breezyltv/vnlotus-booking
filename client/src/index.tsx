@@ -2,10 +2,16 @@ import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom";
 import { Layout, Affix, BackTop } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  //RouteComponentProps,
+} from "react-router-dom";
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 import { useMutation } from "@apollo/react-hooks";
+
 import {
   Header,
   Home,
@@ -27,7 +33,8 @@ import {
 } from "./lib/api/graphql/mutations";
 import "./styles/index.css";
 import { GlobalStyle, ContentSpinner, SpinnerStyled } from "./styles";
-import { Viewer } from "./lib/types";
+import { Viewer, SettingLeftBarType } from "./lib/types";
+import { initViewer, AuthContext, PrivateRoute } from "./lib/auth";
 import reportWebVitals from "./reportWebVitals";
 
 //const { Content } = Layout;
@@ -46,17 +53,9 @@ const client = new ApolloClient({
   },
 });
 
-const initViewer: Viewer = {
-  id: null,
-  token: null,
-  displayName: null,
-  avatar: null,
-  hasWallet: null,
-  didRequest: false,
-};
-
 const App = () => {
   const [viewer, setViewer] = useState<Viewer>(initViewer);
+
   const [signIn, { error }] = useMutation<SignInData, SignInVariables>(
     SIGN_IN,
     {
@@ -73,12 +72,12 @@ const App = () => {
       },
     }
   );
-  console.log(viewer);
 
   const signInRef = useRef(signIn);
 
   useEffect(() => {
     document.title = "Lotus Homestays";
+
     signInRef.current();
   }, []);
 
@@ -102,39 +101,83 @@ const App = () => {
     <ErrorBanner description="We weren't able to verify if you were signed in. Please try again later!" />
   ) : null;
 
+  const isAuthenticated = viewer.id && viewer.token ? true : false;
+  interface IdParams {
+    id: string;
+  }
   return (
-    <Router>
-      <GlobalStyle />
-      {signInErrorBanner}
-      <Affix offsetTop={0}>
-        <Header viewer={viewer} setViewer={setViewer} />
-      </Affix>
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/host" component={Host} />
-        <Route exact path="/Room/:id" component={RoomDetail} />
-        <Route exact path="/Rooms/:location?" component={Rooms} />
-        <Route exact path="/user/:id" component={User} />
-        <Route
-          exact
-          path="/signin"
-          render={(props) => (
-            <SignIn {...props} viewer={viewer} setViewer={setViewer} />
-          )}
-        />
-        <Route
-          exact
-          path="/signup"
-          render={(props) => (
-            <SignUp {...props} viewer={viewer} setViewer={setViewer} />
-          )}
-        />
+    <AuthContext.Provider value={{ viewer }}>
+      <Router>
+        <GlobalStyle />
+        {signInErrorBanner}
+        <Affix offsetTop={0}>
+          <Header viewer={viewer} setViewer={setViewer} />
+        </Affix>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/host" component={Host} />
+          <Route exact path="/Room/:id" component={RoomDetail} />
+          <Route exact path="/Rooms/:location?" component={Rooms} />
+          <PrivateRoute
+            exact
+            path="/user/edit-account/profile/:id"
+            isAuthenticated={isAuthenticated}
+            authenticationPath={"/signin"}
+            render={(props) => (
+              <User {...props} selectedKeys={SettingLeftBarType.PROFILE} />
+            )}
+          />
+          <PrivateRoute
+            exact
+            path="/user/edit-account/change-password/:id"
+            isAuthenticated={isAuthenticated}
+            authenticationPath={"/signin"}
+            render={(props) => (
+              <User
+                {...props}
+                selectedKeys={SettingLeftBarType.CHANGE_PASSWORD}
+              />
+            )}
+          />
+          <PrivateRoute
+            exact
+            path="/user/edit-account/payment/:id"
+            isAuthenticated={isAuthenticated}
+            authenticationPath={"/signin"}
+            render={(props) => (
+              <User {...props} selectedKeys={SettingLeftBarType.PAYMENT} />
+            )}
+          />
+          <PrivateRoute
+            exact
+            path="/user/edit-account/link-account/:id"
+            isAuthenticated={isAuthenticated}
+            authenticationPath={"/signin"}
+            render={(props) => (
+              <User {...props} selectedKeys={SettingLeftBarType.LINK_ACCOUNT} />
+            )}
+          />
+          <Route
+            exact
+            path="/signin"
+            render={(props) => (
+              <SignIn {...props} viewer={viewer} setViewer={setViewer} />
+            )}
+          />
+          <Route
+            exact
+            path="/signup"
+            render={(props) => (
+              <SignUp {...props} viewer={viewer} setViewer={setViewer} />
+            )}
+          />
 
-        <Route exact path="/about" component={Profile} />
-        <Route component={NotFound} />
-      </Switch>
-      <Footer />
-    </Router>
+          <Route exact path="/about" component={Profile} />
+          <Route component={NotFound} />
+        </Switch>
+        <Footer />
+      </Router>
+    </AuthContext.Provider>
   );
 };
 
