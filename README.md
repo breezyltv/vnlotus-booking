@@ -26,6 +26,7 @@
 - React.js framework
 - Functional component
 - UI: Ant design
+- Styled Components: help customize antd's components
 - Apollo client
 - RxJS: handling dynamic search with debounce. (planning for practicing)
 
