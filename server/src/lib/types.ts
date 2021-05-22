@@ -59,9 +59,9 @@ export interface Booking {
 }
 
 export enum Gender {
-  male = "Male",
-  female = "Female",
-  other = "Other",
+  MALE = "male",
+  FEMALE = "female",
+  OTHER = "other",
 }
 
 export interface User {
@@ -72,10 +72,10 @@ export interface User {
   first_name: string | null | undefined;
   last_name: string | null | undefined;
   avatar: string;
-  contact: string;
+  email: string;
   phone?: string;
   address?: string;
-  birthday?: Date;
+  birthday?: Date | null;
   gender?: Gender;
   bio?: string;
   walletId?: string;
@@ -143,6 +143,11 @@ export interface Viewer {
   avatar?: string;
   walletId?: string;
   didRequest: boolean;
+}
+
+export interface YupError {
+  path: string;
+  message: string;
 }
 
 export interface Database {

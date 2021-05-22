@@ -1,10 +1,11 @@
 ## A MERN stack + graphQL project.
 
-- Golden Lotus Homestays is a simple project to view and book a homestays or hotel for vacation rentals, and tourism activities
+- Lotus Homestays is a simple project to view and book a homestays or hotel for vacation rentals, and tourism activities
 
 ## Features:
 
-- MVC architecture
+- Written in Typescript from front end to back end.
+- Responsive design
 
 ### Database:
 
@@ -12,23 +13,27 @@
 
 ### Backend:
 
-- Node.js/express API
-- bcryptjs: Encrypt password
-- Jwt token: sign a token for user/ set expired time
-- Validator: validate inputs
-- Passport: get/check current user, protect private API
+- Node.js
+- GraphQL
+- Apollo server express
+- Handling login Google's OAuth 2.0
+- Validation: Yup
 - Cookie-parser: store token in cookie for more security and avoid XSS attack
+- bcryptjs: Encrypt password (planning for local account)
+- Jwt token: sign a token for user/ set expired time (planning for local account)
+- Passport: get/check current user, protect private API (planning for local account)
 
 ### Frontend:
-
 - React.js framework
 - Functional component
 - UI: Ant design
-- RxJS: handling dynamic search with debounce.
+- Styled Components: help customize antd's components
+- Apollo client
+- RxJS: handling dynamic search with debounce. (planning for practicing)
 
-### DevOps:
-- Docker
+### DevOps (planning...):
 - Github
+- Docker
 - CI/CD: Travis CI
 - Deploy to AWS Beanstalk
 
@@ -42,9 +47,9 @@ Clone project and in the project directory, you can run:
 
 - coming soon
 
-then:
+then run command at the root folder:
 
-### `yarn run dev`
+### `make` or `cd server && yarn run dev`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.

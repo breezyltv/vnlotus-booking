@@ -70,9 +70,9 @@ export const typeDefs = gql`
     result: [Room!]!
   }
   enum Gender {
-    Male
-    Female
-    Other
+    male
+    female
+    other
   }
 
   type User {
@@ -82,7 +82,7 @@ export const typeDefs = gql`
     first_name: String!
     last_name: String!
     avatar: String!
-    contact: String!
+    email: String!
     phone: String
     address: String
     birthday: Date
@@ -131,9 +131,9 @@ export const typeDefs = gql`
   }
 
   type Skills {
-    frameworks: [SkillsType!]!
-    languages: [SkillsType!]!
-    tools: [SkillsType!]!
+    frameworks: [SkillsType!]
+    languages: [SkillsType!]
+    tools: [SkillsType!]
   }
 
   type SkillsType {
@@ -160,9 +160,32 @@ export const typeDefs = gql`
     profile: [Profile!]!
     user(id: ID!): User!
   }
+
+  input UserUpdateInput {
+    _id: ID!
+    first_name: String!
+    last_name: String!
+    phone: String
+    address: String
+    birthday: Date
+    gender: Gender
+    bio: String
+  }
+
+  type YupError {
+    path: String!
+    message: String!
+  }
+
+  type UserUpdateGQLReturnType {
+    data: User
+    errors: [YupError!]
+  }
+
   type Mutation {
     signIn(input: SignInInput): Viewer!
     signOut: Viewer!
     deleteListing(id: ID!): Listing!
+    updateUser(user: UserUpdateInput!): UserUpdateGQLReturnType
   }
 `;

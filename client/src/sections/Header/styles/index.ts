@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { ContainerMd, colorSchemes } from "../../../styles";
-
+import { Menu } from "antd";
 export const MenuDiv = styled.div`
   background-color: #fff;
   border-bottom: solid 1px #e8e8e8;
@@ -24,6 +24,10 @@ export const Nav = styled(ContainerMd)`
     flex-direction: column;
     padding: 0 0 10px 0;
   }
+`;
+
+export const AccountSubMenuStyled = styled(ContainerMd)`
+  padding: 0 55px;
 `;
 
 export const SearchNav = styled.div`
@@ -125,5 +129,16 @@ export const MenuUserLink = styled.a`
   span:last-child {
     margin-right: 0;
     margin-top: 3px;
+  }
+`;
+
+export const AccountBarRight = styled.div`
+  margin-left: auto;
+`;
+
+export const AccountMenuStyled = styled(Menu)`
+  .ant-menu-root.ant-menu-vertical {
+    box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%),
+      0 9px 28px 8px rgb(0 0 0 / 5%) !important;
   }
 `;

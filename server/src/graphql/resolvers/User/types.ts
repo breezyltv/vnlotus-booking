@@ -1,4 +1,5 @@
 import { Booking, Room } from "../../../lib/types";
+import { User, YupError } from "../../../lib/types";
 export interface UserArgs {
   id: string;
 }
@@ -21,4 +22,13 @@ export interface UserRoomsArgs {
 export interface UserRoomsData {
   total: number;
   result: Room[];
+}
+
+export interface UserUpdateArgs {
+  user: User;
+}
+
+export interface UserUpdateReturnType {
+  data: User | null;
+  errors: YupError[] | null;
 }

@@ -13,6 +13,19 @@ export const displaySuccessNotification = (
     },
   });
 };
+export const displayErrorNotification = (
+  message: string,
+  description?: string
+) => {
+  return notification["error"]({
+    message,
+    description,
+    placement: "topRight",
+    style: {
+      marginTop: 50,
+    },
+  });
+};
 
 export const displayErrorMessage = (error: string) => {
   return message.error(error);
@@ -242,7 +255,7 @@ export const profileStatus = [
   "Other",
 ];
 
-export const upperFirstChar = (text: string): string => {
+export const upperFirstChar = (text: string): string | null => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
@@ -258,9 +271,26 @@ export const randomChoiceArr = (arr: string[], num: number): string[] => {
   return randomArr;
 };
 
-export const upperCaseString = (str: string): string => {
-  return str
-    .split(" ")
-    .map((word) => word[0].toUpperCase() + word.slice(1))
-    .join(" ");
+export const upperCaseString = (str: string | null): string => {
+  if (str)
+    return str
+      .split(" ")
+      .map((word) => word[0].toUpperCase() + word.slice(1))
+      .join(" ");
+  return "Unknown";
+};
+
+//handle validation from backend
+export const validateStatus = (
+  errors: string | JSX.Element | null,
+  errorStatus: boolean
+) => {
+  let status = {};
+  if (errors && errorStatus) {
+    status = {
+      validateStatus: "error",
+      help: errors,
+    };
+  }
+  return status;
 };

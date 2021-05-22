@@ -56,7 +56,7 @@ const signInViaGoogle = async (
       $set: {
         displayName: userName,
         avatar: userAvatar,
-        contact: userEmail,
+        email: userEmail,
         token,
       },
     },
@@ -72,7 +72,7 @@ const signInViaGoogle = async (
       last_name: lastName,
       provider: LoginProvider.Google,
       avatar: userAvatar,
-      contact: userEmail,
+      email: userEmail,
       income: 0,
       bookings: [],
       rooms: [],

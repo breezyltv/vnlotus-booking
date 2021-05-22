@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { SignInInput } from "./../../../../../graphql/globalTypes";
+import { SignInInput } from "../../../globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: SignIn
@@ -11,7 +11,7 @@ import { SignInInput } from "./../../../../../graphql/globalTypes";
 
 export interface SignIn_signIn {
   __typename: "Viewer";
-  id: string;
+  id: string | null;
   token: string | null;
   displayName: string | null;
   avatar: string | null;

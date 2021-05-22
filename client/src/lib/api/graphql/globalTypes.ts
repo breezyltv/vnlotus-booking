@@ -7,6 +7,17 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum Gender {
+  MALE = "male",
+  FEMALE = "female",
+  OTHER = "other",
+}
+
+export enum LoginProvider {
+  Email = "EMAIL",
+  Google = "GOOGLE",
+}
+
 export interface SignInInput {
   code: string;
 }
