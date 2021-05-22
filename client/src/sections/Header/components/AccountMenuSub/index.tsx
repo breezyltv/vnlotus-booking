@@ -6,7 +6,7 @@ import {
   CalendarOutlined,
   SettingOutlined,
   HeartOutlined,
-  MailOutlined,
+  CarryOutOutlined,
 } from "@ant-design/icons";
 
 type MenuMode =
@@ -53,8 +53,8 @@ export const AccountMenuSub = ({ mode }: Props) => {
       <Menu.Item key="bookings" icon={<CalendarOutlined />}>
         <Link to={`/user/bookings/${viewer.id}`}>My Bookings</Link>
       </Menu.Item>
-      <Menu.Item key="messages" icon={<MailOutlined />}>
-        <Link to={`/user/messages/${viewer.id}`}>Messages</Link>
+      <Menu.Item key="listings" icon={<CarryOutOutlined />}>
+        <Link to={`/user/listings/${viewer.id}`}>My Listings</Link>
       </Menu.Item>
       <Menu.Item key="edit-account" icon={<SettingOutlined />}>
         <Link to={`/user/edit-account/profile/${viewer.id}`}>

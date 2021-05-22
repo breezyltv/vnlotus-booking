@@ -95,8 +95,7 @@ export const SignUpForm = ({ handleSignUp }: Props) => {
       <LoginMeta>
         <Space direction="vertical" size={20}>
           <Text>
-            You have already a Luxstay account?{" "}
-            <Link to="/signin"> Sign In</Link>
+            You have already a Lotus account? <Link to="/signin"> Sign In</Link>
           </Text>
           <Text>
             By clicking next below and creating an account, you agree to our

@@ -62,7 +62,7 @@ export const userResolvers: IResolvers = {
             errors: formatYupError(error),
           };
         } else {
-          console.log("graphql errors");
+          console.log("Apollo graphql errors");
           throw error;
         }
       }
@@ -73,13 +73,13 @@ export const userResolvers: IResolvers = {
         },
         {
           $set: {
-            first_name: user.first_name,
-            last_name: user.last_name,
+            first_name: user.first_name?.trim(),
+            last_name: user.last_name?.trim(),
             phone: user.phone,
-            address: user.address,
+            address: user.address?.trim(),
             birthday: birthday,
             gender: user.gender,
-            bio: user.bio,
+            bio: user.bio?.trim(),
           },
         },
         { returnOriginal: false }

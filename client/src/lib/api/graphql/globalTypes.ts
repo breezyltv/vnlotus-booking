@@ -13,6 +13,11 @@ export enum Gender {
   OTHER = "other",
 }
 
+export enum LoginProvider {
+  Email = "EMAIL",
+  Google = "GOOGLE",
+}
+
 export interface SignInInput {
   code: string;
 }

@@ -19,6 +19,7 @@ import {
 } from "./components";
 import { PageSkeleton } from "../../lib/components";
 import { SettingLeftBarType } from "../../lib/types";
+import { ErrorBanner } from "../../lib/components";
 
 // interface IdMatchParams {
 //   id: string;
@@ -41,7 +42,7 @@ export const User = ({ selectedKeys, match }: Props) => {
   const {
     data,
     loading: loadingUserProfile,
-    error: userProfileError,
+    error: getUserProfileError,
   } = useQuery<UserType, UserVariables>(USER, {
     variables: {
       id: viewer.id ? viewer.id : "",
@@ -54,11 +55,15 @@ export const User = ({ selectedKeys, match }: Props) => {
       "1": <UpdateProfile user={data.user} />,
       "2": <ChangePassword />,
       "3": <Payment />,
-      "4": <LinkAccount />,
+      "4": <LinkAccount user={data.user} />,
     };
   }
+  const getUserProfileErrorBanner = getUserProfileError ? (
+    <ErrorBanner description="Sorry! We weren't able to load profile. Please try again later!" />
+  ) : null;
   return (
     <div>
+      {getUserProfileErrorBanner}
       <InfoBarHeader>
         <UserContainer>
           <InfoLeftBar selectedKeys={selectedKeys} />

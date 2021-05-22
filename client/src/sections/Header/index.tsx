@@ -61,7 +61,7 @@ export const Header = ({ viewer, setViewer }: Props) => {
         </Drawer>
       </>
     ) : (
-      <AccountInfoBar />
+      <AccountInfoBar viewer={viewer} setViewer={setViewer} />
     );
   return (
     <MenuDiv>

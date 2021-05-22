@@ -9,6 +9,7 @@ export const USER = gql`
       first_name
       last_name
       email
+      provider
       phone
       address
       birthday

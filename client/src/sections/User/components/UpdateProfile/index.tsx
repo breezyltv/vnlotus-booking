@@ -20,6 +20,7 @@ import {
   Radio,
   Switch,
   Space,
+  Typography,
 } from "antd";
 import {
   validateStatus,
@@ -29,6 +30,8 @@ import {
 } from "../../../../lib/utils";
 import { ErrorBanner } from "../../../../lib/components";
 import moment from "moment";
+
+const { Text } = Typography;
 
 const dateFormatList = ["MM/DD/YYYY", "MM/DD/YY"];
 
@@ -61,12 +64,12 @@ export const UpdateProfile = ({ user }: Props) => {
   const [imageUrl, setImageUrl] = useState(undefined);
   const [isShowBackendError, setIsShowBackendError] = useState(false);
   const [backendErrors, setBackendErrors] = useState<IValidateMess>({});
-  const [userFields, setUserFields] = useState<UserUpdateReturnType>({
-    updateUser: {
-      data: null,
-      errors: null,
-    },
-  });
+  // const [userFields, setUserFields] = useState<UserUpdateReturnType>({
+  //   updateUser: {
+  //     data: null,
+  //     errors: null,
+  //   },
+  // });
   console.log(user);
 
   const [updateUser, { loading: updateUserLoading, error: updateUserError }] =
@@ -199,7 +202,7 @@ export const UpdateProfile = ({ user }: Props) => {
       <br />
       <Form
         layout="vertical"
-        name="nest-messages"
+        name="user-update-profile"
         initialValues={initialValues}
         onFinish={handleOnUpdate}
         //validateMessages={validateMessages}
@@ -312,10 +315,16 @@ export const UpdateProfile = ({ user }: Props) => {
               htmlType="submit"
               loading={updateUserLoading}
             >
-              Update
+              Update Profile
             </Button>
           </Form.Item>
-          <Form.Item label="Show Server-side Validation Messages (for testing)">
+          <Form.Item
+            label={
+              <Text type="warning">
+                Show Server-side Validation Messages (for testing)
+              </Text>
+            }
+          >
             <Switch
               onChange={(checked) => {
                 setIsShowBackendError(true);

@@ -85,11 +85,11 @@ export const SignIn = ({ viewer, setViewer }: Props) => {
   if (signInData && signInData.signIn) {
     const { id: viewerId } = signInData.signIn;
 
-    return <Redirect to={`/user/${viewerId}`} />;
+    return <Redirect to={`/user/edit-account/profile/${viewerId}`} />;
   }
 
   if (viewer.token) {
-    return <Redirect to={`/user/${viewer.id}`} />;
+    return <Redirect to={`/user/edit-account/profile/${viewer.id}`} />;
   }
   const signInErrorBanner = signInError ? (
     <ErrorBanner description="Sorry! We weren't able to sign you in. Please try again later!" />

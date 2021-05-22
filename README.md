@@ -5,6 +5,7 @@
 ## Features:
 
 - Written in Typescript from front end to back end.
+- Responsive design
 
 ### Database:
 
