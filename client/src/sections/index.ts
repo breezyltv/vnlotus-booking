@@ -9,3 +9,4 @@ export * from "./SignUp";
 export * from "./Profile";
 export * from "./Footer";
 export * from "./NotFound";
+export * from "./User/components";

@@ -18,18 +18,19 @@ export const ResumeExp = ({ profile }: Props) => {
           </ResumeSectionHeading>
           <ResumeTimeline>
             <Timeline>
-              {profile.projects.map((item) => (
-                <Timeline.Item color={colorSchemes["main-color"]}>
-                  <Typography>
-                    <Space direction="vertical">
-                      <Title level={5}>{upperCaseString(item.title)}</Title>
-                      <Text>{item.feature}</Text>
-                      <Paragraph>{item.description}</Paragraph>
-                      <a href={item.github_link}>{item.github_link}</a>
-                    </Space>
-                  </Typography>
-                </Timeline.Item>
-              ))}
+              {profile.projects &&
+                profile.projects.map((item) => (
+                  <Timeline.Item color={colorSchemes["main-color"]}>
+                    <Typography>
+                      <Space direction="vertical">
+                        <Title level={5}>{upperCaseString(item.title)}</Title>
+                        <Text>{item.feature}</Text>
+                        <Paragraph>{item.description}</Paragraph>
+                        <a href={item.github_link}>{item.github_link}</a>
+                      </Space>
+                    </Typography>
+                  </Timeline.Item>
+                ))}
             </Timeline>
           </ResumeTimeline>
         </Col>
@@ -39,28 +40,32 @@ export const ResumeExp = ({ profile }: Props) => {
           </ResumeSectionHeading>
           <ResumeTimeline>
             <Timeline>
-              {profile.education
-                .sort(
-                  (a, b) =>
-                    new Date(a.from).getTime() - new Date(b.from).getTime()
-                )
-                .map((item) => (
-                  <Timeline.Item color={colorSchemes["main-color"]}>
-                    <Typography>
-                      <Space direction="vertical">
-                        <Text>
-                          {moment(item.from).year()} -{" "}
-                          {item.to ? moment(item.to).year() : "Now"}
-                        </Text>
-                        <Title level={5}>{upperCaseString(item.school)}</Title>
-                        <Text>Major: {upperCaseString(item.major)}</Text>
-                        <Paragraph>
-                          {item.description && upperFirstChar(item.description)}
-                        </Paragraph>
-                      </Space>
-                    </Typography>
-                  </Timeline.Item>
-                ))}
+              {profile.education &&
+                profile.education
+                  .sort(
+                    (a, b) =>
+                      new Date(a.from).getTime() - new Date(b.from).getTime()
+                  )
+                  .map((item) => (
+                    <Timeline.Item color={colorSchemes["main-color"]}>
+                      <Typography>
+                        <Space direction="vertical">
+                          <Text>
+                            {moment(item.from).year()} -{" "}
+                            {item.to ? moment(item.to).year() : "Now"}
+                          </Text>
+                          <Title level={5}>
+                            {upperCaseString(item.school)}
+                          </Title>
+                          <Text>Major: {upperCaseString(item.major)}</Text>
+                          <Paragraph>
+                            {item.description &&
+                              upperFirstChar(item.description)}
+                          </Paragraph>
+                        </Space>
+                      </Typography>
+                    </Timeline.Item>
+                  ))}
             </Timeline>
           </ResumeTimeline>
         </Col>

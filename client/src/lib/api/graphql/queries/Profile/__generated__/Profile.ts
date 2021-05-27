@@ -25,9 +25,9 @@ export interface Profile_profile_skills_tools {
 
 export interface Profile_profile_skills {
   __typename: "Skills";
-  languages: Profile_profile_skills_languages[];
-  frameworks: Profile_profile_skills_frameworks[];
-  tools: Profile_profile_skills_tools[];
+  languages: Profile_profile_skills_languages[] | null;
+  frameworks: Profile_profile_skills_frameworks[] | null;
+  tools: Profile_profile_skills_tools[] | null;
 }
 
 export interface Profile_profile_projects {
@@ -62,8 +62,8 @@ export interface Profile_profile {
   position: string | null;
   social: any | null;
   skills: Profile_profile_skills;
-  projects: Profile_profile_projects[];
-  education: Profile_profile_education[];
+  projects: Profile_profile_projects[] | null;
+  education: Profile_profile_education[] | null;
 }
 
 export interface Profile {

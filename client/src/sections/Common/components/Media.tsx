@@ -1,9 +1,9 @@
 import { Row, Col, Image, Typography } from "antd";
 import { MediaDiv } from "../styles";
-import coin_img from "../../assets/coins@2x.png";
-import sale_img from "../../assets/top-sales@2x.png";
-import wallet_img from "../../assets/wallet@2x.png";
-import backpack_img from "../../assets/backpack@2x.png";
+import coin_img from "../assets/coins@2x.png";
+import sale_img from "../assets/top-sales@2x.png";
+import wallet_img from "../assets/wallet@2x.png";
+import backpack_img from "../assets/backpack@2x.png";
 
 const { Title, Text } = Typography;
 export const Media = () => {

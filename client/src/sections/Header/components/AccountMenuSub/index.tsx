@@ -20,8 +20,8 @@ interface Props {
 }
 
 //type KeysSubMenu = "bookings" | "messages" | "edit-account" | "wishlist" | null;
-
-const AccountSubMenuKeys = ["bookings", "messages", "edit-account", "wishlist"];
+// list of keys to set selectedKeys for sub menu
+const AccountSubMenuKeys = ["bookings", "listings", "edit-account", "wishlist"];
 
 export const AccountMenuSub = ({ mode }: Props) => {
   const [subMenuKey, setSubMenuKey] = useState("");

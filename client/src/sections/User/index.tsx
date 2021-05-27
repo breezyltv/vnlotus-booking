@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { AuthContext } from "../../lib/auth/AuthProvider";
 import {
-  USER,
+  USER_PROFILE,
   User as UserType,
   UserVariables,
 } from "../../lib/api/graphql/queries/";
@@ -35,6 +35,7 @@ interface Props extends RouteComponentProps<MatchParams> {
 type SettingType = {
   [key: string]: JSX.Element;
 };
+
 export const User = ({ selectedKeys, match }: Props) => {
   const { viewer } = useContext(AuthContext);
   //console.log(match.params.id);
@@ -43,7 +44,7 @@ export const User = ({ selectedKeys, match }: Props) => {
     data,
     loading: loadingUserProfile,
     error: getUserProfileError,
-  } = useQuery<UserType, UserVariables>(USER, {
+  } = useQuery<UserType, UserVariables>(USER_PROFILE, {
     variables: {
       id: viewer.id ? viewer.id : "",
     },
@@ -51,6 +52,8 @@ export const User = ({ selectedKeys, match }: Props) => {
   const isUser = true;
   let accountSettingComp: SettingType = {};
   if (data) {
+    console.log(data);
+
     accountSettingComp = {
       "1": <UpdateProfile user={data.user} />,
       "2": <ChangePassword />,

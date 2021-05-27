@@ -18,3 +18,12 @@ export interface YupError {
   path: string;
   message: string;
 }
+
+export enum RoomType {
+  APARTMENT = "apartment",
+  HOUSE = "house",
+  VILLA = "villa",
+  RESORT = "resort",
+  HOTEL = "hotel",
+  HOMESTAY = "homestay",
+}

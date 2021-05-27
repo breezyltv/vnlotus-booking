@@ -1,7 +1,7 @@
 import { Button, Typography, Space } from "antd";
 import { GoogleOutlined, AuditOutlined } from "@ant-design/icons";
 import { User_user as UserType } from "../../../../lib/api/graphql/queries/";
-import { LoginProvider } from "../../../../lib/api/graphql/globalTypes";
+import { LoginType } from "../../../../lib/api/graphql/globalTypes";
 const { Title, Text } = Typography;
 interface Props {
   user: UserType;
@@ -15,7 +15,7 @@ export const LinkAccount = ({ user }: Props) => {
         <Button
           type="default"
           size="large"
-          disabled={user.provider === LoginProvider.Google ? true : false}
+          disabled={user.provider === LoginType.GOOGLE ? true : false}
           icon={<GoogleOutlined />}
         >
           Connect to Google
@@ -27,7 +27,7 @@ export const LinkAccount = ({ user }: Props) => {
         <Button
           type="primary"
           size="large"
-          disabled={user.provider === LoginProvider.Email ? true : false}
+          disabled={user.provider === LoginType.EMAIL ? true : false}
           icon={<AuditOutlined />}
         >
           Connect to Local Account

@@ -3,10 +3,9 @@ import { useMutation } from "@apollo/react-hooks";
 import { User_user as UserType } from "../../../../lib/api/graphql/queries/";
 import {
   UPDATING_USER,
-  UserUpdateReturnType,
-  UserUpdate,
-  UpdateUserVariables,
-  YupError,
+  UpdatingUser as UserUpdateReturnType,
+  UpdatingUserVariables,
+  UpdatingUser_updateUser_errors as YupError,
 } from "../../../../lib/api/graphql/mutations";
 import { Gender } from "../../../../lib/api/graphql/globalTypes";
 import {
@@ -28,6 +27,7 @@ import {
   displayErrorMessage,
   displayErrorNotification,
 } from "../../../../lib/utils";
+import { CustomButtonPrimary } from "../../../../styles";
 import { ErrorBanner } from "../../../../lib/components";
 import moment from "moment";
 
@@ -59,6 +59,11 @@ interface Props {
 interface IValidateMess {
   [key: string]: string[];
 }
+
+interface IProfileData {
+  user: UpdatingUserVariables;
+}
+
 export const UpdateProfile = ({ user }: Props) => {
   const [loadingImg, setLoadingImg] = useState(false);
   const [imageUrl, setImageUrl] = useState(undefined);
@@ -73,12 +78,12 @@ export const UpdateProfile = ({ user }: Props) => {
   console.log(user);
 
   const [updateUser, { loading: updateUserLoading, error: updateUserError }] =
-    useMutation<UserUpdateReturnType, UserUpdate>(UPDATING_USER, {
+    useMutation<UserUpdateReturnType, UpdatingUserVariables>(UPDATING_USER, {
       onCompleted: (data) => {
         console.log(data);
-        if (!data.updateUser.errors) {
+        if (!data.updateUser?.errors) {
           setBackendErrors({});
-          displaySuccessNotification("Data have successfully updated!");
+          displaySuccessNotification("Profile has successfully updated!");
         } else {
           setBackendErrors(showErrorsBackend(data.updateUser.errors));
           displayErrorNotification(
@@ -114,7 +119,7 @@ export const UpdateProfile = ({ user }: Props) => {
       <Image src={user.avatar ? user.avatar : undefined} preview={false} />
     </div>
   );
-  const handleOnUpdate = async (data: UpdateUserVariables) => {
+  const handleOnUpdate = async (data: IProfileData) => {
     //const { user } = data;
     data.user._id = user.id;
     console.log(data);
@@ -297,9 +302,9 @@ export const UpdateProfile = ({ user }: Props) => {
 
         <Form.Item name={["user", "gender"]} label="Gender">
           <Radio.Group>
-            <Radio value={Gender.MALE}>Male</Radio>
-            <Radio value={Gender.FEMALE}>Female</Radio>
-            <Radio value={Gender.OTHER}>other</Radio>
+            <Radio value={Gender.male}>Male</Radio>
+            <Radio value={Gender.female}>Female</Radio>
+            <Radio value={Gender.other}>Other</Radio>
           </Radio.Group>
         </Form.Item>
         <Form.Item name={["user", "address"]} label="Address">
@@ -310,13 +315,14 @@ export const UpdateProfile = ({ user }: Props) => {
         </Form.Item>
         <Space size={100} align="end">
           <Form.Item>
-            <Button
+            <CustomButtonPrimary
               type="primary"
               htmlType="submit"
               loading={updateUserLoading}
+              size="large"
             >
               Update Profile
-            </Button>
+            </CustomButtonPrimary>
           </Form.Item>
           <Form.Item
             label={

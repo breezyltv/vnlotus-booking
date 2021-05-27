@@ -1,6 +1,6 @@
 import { gql } from "apollo-boost";
 
-export const USER = gql`
+export const USER_PROFILE = gql`
   query User($id: ID!) {
     user(id: $id) {
       id

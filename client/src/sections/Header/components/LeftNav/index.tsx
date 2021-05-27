@@ -9,10 +9,7 @@ export const LeftNav = ({ mode }: Props) => {
     <>
       <Menu mode={mode ? "inline" : "horizontal"}>
         <Menu.Item key="author">
-          <Link to="/about">About Me</Link>
-        </Menu.Item>
-        <Menu.Item key="contact">
-          <Link to="/contact">Contact Me</Link>
+          <Link to="/about">Resume/About Me</Link>
         </Menu.Item>
       </Menu>
     </>
