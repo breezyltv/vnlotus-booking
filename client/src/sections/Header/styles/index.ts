@@ -5,7 +5,7 @@ export const MenuDiv = styled.div`
   background-color: #fff;
   border-bottom: solid 1px #e8e8e8;
   box-shadow: 0 0 30px #f3f1f1;
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     padding-bottom: 1rem;
   }
 `;
@@ -18,8 +18,7 @@ export const Nav = styled(ContainerMd)`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
     padding: 0 0 10px 0;
@@ -38,13 +37,13 @@ export const Logo = styled.div`
   display: flex;
   margin: 0.7rem;
   width: 150px;
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
   }
 `;
 
 export const NavImg = styled.img`
   width: 3rem;
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     width: 2.5rem;
   }
 `;
@@ -100,7 +99,7 @@ export const NavSubMenu = styled.div`
     background: none;
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     width: 100%;
     justify-content: center;
     .barsMenu {

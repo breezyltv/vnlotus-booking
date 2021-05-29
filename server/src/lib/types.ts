@@ -68,7 +68,7 @@ export interface User {
   _id: string;
   token: string;
   provider: LoginProvider;
-  displayName: string;
+  displayName?: string;
   first_name: string | null | undefined;
   last_name: string | null | undefined;
   avatar: string;

@@ -38,7 +38,7 @@ export const LoginForm = ({ handleAuthorizeViaGoogle }: Props) => {
         </Form.Item>
 
         <Form.Item>
-          <CustomButton htmlType="submit" size="large" block>
+          <CustomButton htmlType="submit" size="large" shape="round" block>
             Sign In
           </CustomButton>
         </Form.Item>

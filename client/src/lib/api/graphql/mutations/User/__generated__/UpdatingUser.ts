@@ -3,16 +3,14 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Gender } from "../../../globalTypes";
+import { Gender } from "./../../../globalTypes";
 
 // ====================================================
-// GraphQL query operation: User
+// GraphQL mutation operation: UpdatingUser
 // ====================================================
 
-export interface User_user {
+export interface UpdatingUser_updateUser_data {
   __typename: "User";
-  id: string;
-  displayName: string;
   first_name: string;
   last_name: string;
   phone: string | null;
@@ -22,31 +20,29 @@ export interface User_user {
   bio: string | null;
 }
 
-export interface YupError {
+export interface UpdatingUser_updateUser_errors {
+  __typename: "YupError";
   path: string;
   message: string;
 }
 
-export interface UserUpdate_userUpdate {
-  data: User_user | null;
-  errors: YupError[] | null;
+export interface UpdatingUser_updateUser {
+  __typename: "UserUpdateGQLReturnType";
+  data: UpdatingUser_updateUser_data | null;
+  errors: UpdatingUser_updateUser_errors[] | null;
 }
 
-export interface UserUpdateReturnType {
-  updateUser: UserUpdate_userUpdate;
+export interface UpdatingUser {
+  updateUser: UpdatingUser_updateUser | null;
 }
 
-export interface UserUpdate {
+export interface UpdatingUserVariables {
   _id: string;
   first_name: string;
   last_name: string;
   phone?: string | null;
-  address?: string | null;
   birthday?: any | null;
   gender?: Gender | null;
+  address?: string | null;
   bio?: string | null;
-}
-
-export interface UpdateUserVariables {
-  user: UserUpdate;
 }

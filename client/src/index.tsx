@@ -24,6 +24,7 @@ import {
   SignUp,
   Profile,
   Footer,
+  MyListings,
 } from "./sections";
 import { HeaderSkeleton, ErrorBanner } from "./lib/components";
 import {
@@ -31,7 +32,7 @@ import {
   SignIn as SignInData,
   SignInVariables,
 } from "./lib/api/graphql/mutations";
-import "./styles/index.css";
+//import "./styles/index.css";
 import { GlobalStyle, ContentSpinner, SpinnerStyled } from "./styles";
 import { Viewer, SettingLeftBarType } from "./lib/types";
 import { initViewer, AuthContext, PrivateRoute } from "./lib/auth";
@@ -102,9 +103,9 @@ const App = () => {
   ) : null;
 
   const isAuthenticated = viewer.id && viewer.token ? true : false;
-  interface IdParams {
-    id: string;
-  }
+  // interface IdParams {
+  //   id: string;
+  // }
   return (
     <AuthContext.Provider value={{ viewer }}>
       <Router>
@@ -156,6 +157,13 @@ const App = () => {
             render={(props) => (
               <User {...props} selectedKeys={SettingLeftBarType.LINK_ACCOUNT} />
             )}
+          />
+          <PrivateRoute
+            exact
+            path="/user/listings/:id"
+            isAuthenticated={isAuthenticated}
+            authenticationPath={"/signin"}
+            component={MyListings}
           />
           <Route
             exact

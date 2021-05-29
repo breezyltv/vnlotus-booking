@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Gender, LoginProvider } from "../../../globalTypes";
+import { LoginType, Gender } from "./../../../globalTypes";
 
 // ====================================================
 // GraphQL query operation: User
@@ -17,7 +17,7 @@ export interface User_user {
   first_name: string;
   last_name: string;
   email: string;
-  provider: LoginProvider;
+  provider: LoginType;
   phone: string | null;
   address: string | null;
   birthday: any | null;

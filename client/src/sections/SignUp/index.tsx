@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { Row, Col } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
 import { SignUpContainer } from "./styles";
 import { ErrorBanner } from "../../lib/components";
 import {
@@ -83,7 +82,10 @@ export const SignUp = ({ viewer, setViewer }: Props) => {
   return (
     <>
       {signInErrorBanner}
-      <Banner />
+      <Banner
+        title="Sign up for more promotions and benefits"
+        description="Swift, convenient, and safe. Sign up now for more interests."
+      />
 
       <SignUpContainer>
         <Row gutter={[15, 0]} justify="center">

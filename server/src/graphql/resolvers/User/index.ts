@@ -1,7 +1,7 @@
 import { IResolvers } from "apollo-server-express";
 //import { UserInputError } from 'apollo-server';
 import * as yup from "yup";
-import { Database, User, YupError } from "../../../lib/types";
+import { Database, User } from "../../../lib/types";
 import { authorize, formatYupError } from "../../../lib/utils";
 import {
   UserArgs,
@@ -53,6 +53,12 @@ export const userResolvers: IResolvers = {
           : null;
 
       try {
+        // check if request is authorized
+        const viewer = await authorize(db, req);
+        if (viewer && viewer._id !== user._id) {
+          throw new Error(`This request is unauthorized! id: ${user._id}`);
+        }
+        //validate inputs with Yup
         await UserUpdateRules.validate(user, { abortEarly: false });
       } catch (error) {
         if (error instanceof yup.ValidationError) {
@@ -142,6 +148,7 @@ export const userResolvers: IResolvers = {
           total: 0,
           result: [],
         };
+        //query all rooms which associates with user collection
         let cursor = await db.rooms.find({
           _id: { $in: user.rooms },
         });

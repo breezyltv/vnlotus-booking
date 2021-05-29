@@ -17,7 +17,7 @@ export const typeDefs = gql`
   scalar Object
 
   type Booking {
-    id: ID!
+    _id: ID!
     room: Room!
     tenant: User!
     checkIn: String!
@@ -49,7 +49,7 @@ export const typeDefs = gql`
   }
 
   type Room {
-    id: ID!
+    _id: ID!
     title: String!
     description: String!
     image: Pictures
@@ -59,10 +59,11 @@ export const typeDefs = gql`
     city: String!
     bookings(limit: Int!, page: Int!): Bookings
     bookingsIndex: String!
-    price: Int!
+    price: Float!
     numOfBaths: Int!
     numOfBeds: Int!
     numOfGuests: Int!
+    rating: Float!
   }
 
   type Rooms {
@@ -108,12 +109,12 @@ export const typeDefs = gql`
     position: String
     skills: Skills!
     social: Object
-    projects: [ProjectType]
-    education: [EducationType]
+    projects: [ProjectType!]
+    education: [EducationType!]
   }
 
   type EducationType {
-    id: ID!
+    _id: ID!
     school: String!
     major: String!
     from: Date
@@ -122,7 +123,7 @@ export const typeDefs = gql`
   }
 
   type ProjectType {
-    id: ID!
+    _id: ID!
     title: String!
     github_link: String!
     description: String!
@@ -137,7 +138,7 @@ export const typeDefs = gql`
   }
 
   type SkillsType {
-    id: ID!
+    _id: ID!
     title: String!
     level: Int
     status: Boolean
@@ -152,13 +153,6 @@ export const typeDefs = gql`
   }
   input SignInInput {
     code: String!
-  }
-
-  type Query {
-    authUrl: String!
-    listings: [Listing!]!
-    profile: [Profile!]!
-    user(id: ID!): User!
   }
 
   input UserUpdateInput {
@@ -180,6 +174,13 @@ export const typeDefs = gql`
   type UserUpdateGQLReturnType {
     data: User
     errors: [YupError!]
+  }
+
+  type Query {
+    authUrl: String!
+    listings: [Listing!]!
+    profile: [Profile!]!
+    user(id: ID!): User!
   }
 
   type Mutation {

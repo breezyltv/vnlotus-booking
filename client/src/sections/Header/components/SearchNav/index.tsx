@@ -1,4 +1,5 @@
 import { SearchNav } from "../../styles";
+import { CustomButtonPrimary, CustomButtonDefault } from "../../../../styles";
 import { Input, Menu, Button, Dropdown } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
@@ -18,11 +19,11 @@ export const SearchHeader = () => {
       <Input.Group compact>
         <Input style={{ width: "50%" }} placeholder="Search" />
         <Dropdown overlay={menu} placement="bottomCenter" trigger={["click"]}>
-          <Button>Guests</Button>
+          <CustomButtonDefault>Guests</CustomButtonDefault>
         </Dropdown>
-        <Button type="primary">
+        <CustomButtonPrimary>
           <SearchOutlined />
-        </Button>
+        </CustomButtonPrimary>
       </Input.Group>
     </SearchNav>
   );

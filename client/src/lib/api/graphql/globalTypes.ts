@@ -8,14 +8,23 @@
 //==============================================================
 
 export enum Gender {
-  MALE = "male",
-  FEMALE = "female",
-  OTHER = "other",
+  female = "female",
+  male = "male",
+  other = "other",
 }
 
-export enum LoginProvider {
-  Email = "EMAIL",
-  Google = "GOOGLE",
+export enum LoginType {
+  EMAIL = "EMAIL",
+  GOOGLE = "GOOGLE",
+}
+
+export enum RoomType {
+  APARTMENT = "APARTMENT",
+  HOMESTAY = "HOMESTAY",
+  HOTEL = "HOTEL",
+  HOUSE = "HOUSE",
+  RESORT = "RESORT",
+  VILLA = "VILLA",
 }
 
 export interface SignInInput {

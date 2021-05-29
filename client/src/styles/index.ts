@@ -11,6 +11,7 @@ export const colorSchemes = {
   "color-green": "#00b894",
   "drk-green": "#20bf6b",
   "drk-blue": "#1b9cfc",
+  "drk-yellow": "#e58e26",
   "middle-night": "#2C3A47",
   "color-gray": "#808e9b",
   "color-grayish": "#dadce0",
@@ -37,12 +38,36 @@ export const GlobalStyle = createGlobalStyle`
     ::selection{
       background: #f8c291;
     }
-    /* .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
-    border-color: ${colorSchemes["main-color"]} ;
+
+    .ant-input:hover{
+      border-color: ${colorSchemes["second-main-color"]} !important;
     }
+    .ant-input-affix-wrapper:focus,
+    .ant-input-affix-wrapper-focused,
+    .ant-input:focus
+    {
+      border-color: ${colorSchemes["second-main-color"]};
+      box-shadow: 0 0 0 2px rgba(60,99,130, 0.2);
+    }
+    .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+      border-color: ${colorSchemes["second-main-color"]} ;
+    }
+    .ant-affix{
+      z-index: 99
+    }
+    /*
     .ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused {
       box-shadow: 0 0 0 2px rgba(253, 181, 27, 0.2);;
     } */
+    .ant-menu-horizontal > .ant-menu-item-selected a{
+      color: ${colorSchemes["drk-yellow"]};
+    }
+    .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover.ant-affix, 
+    .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active:hover,
+    .ant-menu-horizontal > .ant-menu-item a:hover{
+      color: ${colorSchemes["drk-yellow"]};
+    }
+
 `;
 
 export const Container = styled(Layout.Content)`
@@ -70,8 +95,13 @@ export const CustomInput = styled(Input)`
   border-radius: 3rem;
   padding: 8px 20px;
   margin-top: 1rem;
+
   svg {
     margin-right: 5px;
+  }
+  :hover,
+  :focus {
+    border-color: ${colorSchemes["second-main-color"]};
   }
 `;
 export const CustomInputPassword = styled(Input.Password)`
@@ -80,6 +110,9 @@ export const CustomInputPassword = styled(Input.Password)`
   margin-top: 1rem;
   svg {
     margin-right: 5px;
+  }
+  :hover {
+    border-color: ${colorSchemes["second-main-color"]};
   }
 `;
 
@@ -90,10 +123,25 @@ export const CustomButton = styled(Button)`
     ${colorSchemes["main-color"]} 51%,
     #ffa801
   );
-  margin-top: 1rem;
+
   border-color: ${colorSchemes["main-color"]};
-  border-radius: 3rem;
   box-shadow: 0 4px 12px 0 rgb(238 167 15 / 40%);
+  :hover {
+    background: ${colorSchemes["second-main-color"]};
+    border-color: ${colorSchemes["main-color"]};
+    color: ${colorSchemes["main-color"]};
+  }
+  :focus {
+    background: ${colorSchemes["main-color"]};
+    border-color: ${colorSchemes["main-color"]};
+    color: ${colorSchemes["second-main-color"]};
+  }
+`;
+
+export const CustomButtonPrimary = styled(Button)`
+  background: ${colorSchemes["second-main-color"]};
+  border-color: ${colorSchemes["second-main-color"]};
+  color: ${colorSchemes["main-color"]};
   :hover,
   :focus {
     background: ${colorSchemes["main-color"]};
@@ -102,13 +150,28 @@ export const CustomButton = styled(Button)`
   }
 `;
 
-export const CustomButtonDefault = styled(Button)`
-  color: ${colorSchemes["main-color"]};
-  :hover {
+export const CustomSearchPrimary = styled(Input.Search)`
+  .ant-btn {
+    background: ${colorSchemes["second-main-color"]};
+    border-color: ${colorSchemes["second-main-color"]};
     color: ${colorSchemes["main-color"]};
-    border-color: ${colorSchemes["main-color"]};
+    :hover,
+    :focus {
+      background: ${colorSchemes["main-color"]};
+      border-color: ${colorSchemes["main-color"]};
+      color: ${colorSchemes["second-main-color"]};
+    }
   }
 `;
+
+export const CustomButtonDefault = styled(Button)`
+  :hover,
+  :focus {
+    color: ${colorSchemes["second-main-color"]};
+    border-color: ${colorSchemes["second-main-color"]};
+  }
+`;
+
 export const CustomButtonGoogle = styled(CustomButtonDefault)`
   border-radius: 3rem;
   :hover {

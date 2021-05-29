@@ -98,7 +98,10 @@ export const SignIn = ({ viewer, setViewer }: Props) => {
   return (
     <>
       {signInErrorBanner}
-      <Banner />
+      <Banner
+        title="Sign in for more promotions and benefits"
+        description="Swift, convenient, and safe. Sign in now for more interests."
+      />
 
       <LoginContainer>
         <Row gutter={[15, 0]} justify="center">

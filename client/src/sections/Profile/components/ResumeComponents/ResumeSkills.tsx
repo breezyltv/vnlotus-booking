@@ -26,24 +26,25 @@ export const ResumeSkills = ({ profile }: Props) => {
               <Title level={2}>Technical Skills</Title>
             </ResumeSectionHeading>
             <ResumeSkillTitle>
-              {profile.skills.frameworks.map((item) => (
-                <>
-                  <Text>
-                    {item.title}
-                    <DynamicIcon
-                      iconName={item.title}
-                      size={20}
-                      type="frameworks"
+              {profile.skills.frameworks &&
+                profile.skills.frameworks.map((item) => (
+                  <>
+                    <Text>
+                      {item.title}
+                      <DynamicIcon
+                        iconName={item.title}
+                        size={20}
+                        type="frameworks"
+                      />
+                    </Text>
+                    <Progress
+                      percent={item.level ? item.level : 0}
+                      showInfo={false}
+                      trailColor={colorSchemes["second-main-color"]}
+                      strokeColor={colorSchemes["main-color"]}
                     />
-                  </Text>
-                  <Progress
-                    percent={item.level ? item.level : 0}
-                    showInfo={false}
-                    trailColor={colorSchemes["second-main-color"]}
-                    strokeColor={colorSchemes["main-color"]}
-                  />
-                </>
-              ))}
+                  </>
+                ))}
             </ResumeSkillTitle>
 
             <Divider />
@@ -73,12 +74,13 @@ export const ResumeSkills = ({ profile }: Props) => {
           </ResumeSectionHeading>
           <ResumeAside>
             <Space wrap>
-              {profile.skills.tools.map((item) => (
-                <Tag color={colorSchemes["main-color"]}>
-                  <DynamicIcon iconName={item.title} size={20} type="tools" />
-                  {item.title}
-                </Tag>
-              ))}
+              {profile.skills.tools &&
+                profile.skills.tools.map((item, idx) => (
+                  <Tag key={idx} color={colorSchemes["main-color"]}>
+                    <DynamicIcon iconName={item.title} size={20} type="tools" />
+                    {item.title}
+                  </Tag>
+                ))}
             </Space>
           </ResumeAside>
         </Col>

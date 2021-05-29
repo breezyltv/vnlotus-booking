@@ -87,7 +87,7 @@ export const SignUpForm = ({ handleSignUp }: Props) => {
         </Form.Item>
 
         <Form.Item>
-          <CustomButton htmlType="submit" size="large" block>
+          <CustomButton htmlType="submit" size="large" shape="round" block>
             Sign Up
           </CustomButton>
         </Form.Item>

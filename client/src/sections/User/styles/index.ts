@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Container, colorSchemes } from "../../../styles";
-import { Menu, Space } from "antd";
+import { Menu, Space, Button } from "antd";
 export const UserContainer = styled(Container)`
   //margin-top: 20px;
   padding: 0 1rem;
@@ -36,4 +36,16 @@ export const InfoBarHeader = styled.div`
 
 export const InfoLeftBarStyled = styled(Space)`
   font-size: 14pt;
+`;
+
+export const CustomButtonDefaultMainColor = styled(Button)`
+  color: ${colorSchemes["main-color"]};
+  :hover {
+    color: ${colorSchemes["main-color"]};
+    border-color: ${colorSchemes["main-color"]};
+  }
+  :focus {
+    color: ${colorSchemes["main-color"]};
+    border-color: ${colorSchemes["main-color"]};
+  }
 `;

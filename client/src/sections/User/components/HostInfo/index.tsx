@@ -1,6 +1,7 @@
 import { Space, Typography } from "antd";
 
-import { CustomButtonDefault } from "../../../../styles/";
+import { CustomButtonDefaultMainColor } from "../../styles/";
+
 const { Text, Title } = Typography;
 export const HostInfo = () => {
   return (
@@ -9,9 +10,9 @@ export const HostInfo = () => {
       <Text>
         Interested in becoming a Lotus host?. Register with your Stripe account!
       </Text>
-      <CustomButtonDefault size="large">
+      <CustomButtonDefaultMainColor size="large">
         Connect with Stripe
-      </CustomButtonDefault>
+      </CustomButtonDefaultMainColor>
       <Text>
         Lotus homestays use <a href="https://stripe.com/">Stripe</a> to help
         transfer your earnings in a secure and truster manner.

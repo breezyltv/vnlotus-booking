@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon src/index.ts",
+    "start": "node src/index.ts",
+    "server": "nodemon -L src/index.ts",
     "build": "tsc -p ./",
     "seed": "ts-node src/temp/seed.ts",
     "clear": "ts-node src/temp/clear.ts",
@@ -25,6 +26,7 @@
     "googleapis": "^73.0.0",
     "graphql": "^15.5.0",
     "graphql-iso-date": "^3.6.1",
+    "graphql-playground-middleware-express": "^1.7.22",
     "lodash.merge": "^4.6.2",
     "mongodb": "^3.6.6",
     "yup": "^0.32.9"
