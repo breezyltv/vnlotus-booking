@@ -11,7 +11,7 @@ export const ResumeMain = styled(Container)`
   .ant-skeleton {
     padding: 1rem;
   }
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     margin: 0.5rem;
   }
 `;
@@ -22,14 +22,14 @@ export const ResumeHeaderRow = styled(Row)`
   padding: 2rem 4rem;
   margin-bottom: 2rem;
   border-bottom: 2px solid ${colorSchemes["second-main-color"]};
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     padding: 2rem;
   }
 `;
 
 export const ResumeIntroRow = styled(Row)`
   padding: 0 4rem;
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     padding: 0 2rem;
   }
 `;
@@ -61,7 +61,7 @@ export const ResumeContact = styled.div`
   a:hover {
     color: ${colorSchemes["color-night"]};
   }
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     border: 0;
     padding-left: 0px;
     margin-top: 20px;
@@ -73,7 +73,7 @@ export const ResumeIntroStyled = styled.div`
     font-size: 1.1rem;
     text-align: justify;
   }
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     .ant-typography {
       margin-top: 1rem;
     }
@@ -139,7 +139,7 @@ export const ResumeAside = styled.aside`
   svg {
     margin-right: 5px;
   }
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     border: none;
     padding: 0;
   }
@@ -171,7 +171,7 @@ export const ResumeSocialList = styled.div`
   .ant-btn-link:hover {
     color: ${colorSchemes["second-main-color"]};
   }
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     .ant-btn-link {
       font-size: 0.8rem;
     }

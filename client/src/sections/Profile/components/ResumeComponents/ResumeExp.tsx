@@ -19,8 +19,8 @@ export const ResumeExp = ({ profile }: Props) => {
           <ResumeTimeline>
             <Timeline>
               {profile.projects &&
-                profile.projects.map((item) => (
-                  <Timeline.Item color={colorSchemes["main-color"]}>
+                profile.projects.map((item, idx) => (
+                  <Timeline.Item key={idx} color={colorSchemes["main-color"]}>
                     <Typography>
                       <Space direction="vertical">
                         <Title level={5}>{upperCaseString(item.title)}</Title>
@@ -46,8 +46,8 @@ export const ResumeExp = ({ profile }: Props) => {
                     (a, b) =>
                       new Date(a.from).getTime() - new Date(b.from).getTime()
                   )
-                  .map((item) => (
-                    <Timeline.Item color={colorSchemes["main-color"]}>
+                  .map((item, idx) => (
+                    <Timeline.Item key={idx} color={colorSchemes["main-color"]}>
                       <Typography>
                         <Space direction="vertical">
                           <Text>

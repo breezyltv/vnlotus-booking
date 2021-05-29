@@ -75,8 +75,8 @@ export const ResumeSkills = ({ profile }: Props) => {
           <ResumeAside>
             <Space wrap>
               {profile.skills.tools &&
-                profile.skills.tools.map((item) => (
-                  <Tag color={colorSchemes["main-color"]}>
+                profile.skills.tools.map((item, idx) => (
+                  <Tag key={idx} color={colorSchemes["main-color"]}>
                     <DynamicIcon iconName={item.title} size={20} type="tools" />
                     {item.title}
                   </Tag>

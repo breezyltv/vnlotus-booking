@@ -155,13 +155,6 @@ export const typeDefs = gql`
     code: String!
   }
 
-  type Query {
-    authUrl: String!
-    listings: [Listing!]!
-    profile: [Profile!]!
-    user(id: ID!): User!
-  }
-
   input UserUpdateInput {
     _id: ID!
     first_name: String!
@@ -181,6 +174,13 @@ export const typeDefs = gql`
   type UserUpdateGQLReturnType {
     data: User
     errors: [YupError!]
+  }
+
+  type Query {
+    authUrl: String!
+    listings: [Listing!]!
+    profile: [Profile!]!
+    user(id: ID!): User!
   }
 
   type Mutation {

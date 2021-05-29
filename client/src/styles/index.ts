@@ -11,6 +11,7 @@ export const colorSchemes = {
   "color-green": "#00b894",
   "drk-green": "#20bf6b",
   "drk-blue": "#1b9cfc",
+  "drk-yellow": "#e58e26",
   "middle-night": "#2C3A47",
   "color-gray": "#808e9b",
   "color-grayish": "#dadce0",
@@ -58,6 +59,14 @@ export const GlobalStyle = createGlobalStyle`
     .ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused {
       box-shadow: 0 0 0 2px rgba(253, 181, 27, 0.2);;
     } */
+    .ant-menu-horizontal > .ant-menu-item-selected a{
+      color: ${colorSchemes["drk-yellow"]};
+    }
+    .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover.ant-affix, 
+    .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active:hover,
+    .ant-menu-horizontal > .ant-menu-item a:hover{
+      color: ${colorSchemes["drk-yellow"]};
+    }
 
 `;
 
