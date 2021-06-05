@@ -10,8 +10,22 @@ export enum RoomType {
 }
 
 export enum LoginProvider {
-  Email = "EMAIL",
-  Google = "GOOGLE",
+  EMAIL = "EMAIL",
+  GOOGLE = "GOOGLE",
+}
+
+export interface TokenUserData {
+  _id: string;
+  first_name: string | null | undefined;
+  last_name: string | null | undefined;
+  email: string;
+  provider: string;
+}
+
+export interface ITokenUser {
+  data: TokenUserData;
+  iat: number;
+  exp: number;
 }
 
 export interface BookingsIndexMonth {
@@ -43,6 +57,7 @@ export interface Room {
   numOfBeds: number;
   numOfBaths: number;
   rating: number;
+  authorized?: boolean;
 }
 
 export interface Pictures {
@@ -66,7 +81,8 @@ export enum Gender {
 
 export interface User {
   _id: string;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   provider: LoginProvider;
   displayName?: string;
   first_name: string | null | undefined;
@@ -82,7 +98,11 @@ export interface User {
   income: number;
   bookings: ObjectId[];
   rooms: ObjectId[];
+  wishlist?: ObjectId[];
   authorized?: boolean;
+  local?: {
+    password: string;
+  };
 }
 
 export interface Profile {
@@ -139,10 +159,12 @@ export interface SkillsType {
 
 export interface Viewer {
   _id?: string;
-  token?: string;
+  accessToken?: string;
+  refreshToken?: string;
   avatar?: string;
   walletId?: string;
   didRequest: boolean;
+  provider?: LoginProvider;
 }
 
 export interface YupError {

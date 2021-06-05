@@ -7,7 +7,8 @@ import {
   CustomButtonGoogle,
 } from "../../../../styles";
 import { LoginCard, LoginHeader, LoginMeta } from "../../styles";
-import { MailOutlined, LockOutlined, GoogleOutlined } from "@ant-design/icons";
+import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { ReactComponent as GoogleSVG } from "../../../Common/assets/google-svg.svg";
 const { Title, Text } = Typography;
 interface Props {
   handleAuthorizeViaGoogle: () => void;
@@ -55,7 +56,11 @@ export const LoginForm = ({ handleAuthorizeViaGoogle }: Props) => {
       </LoginMeta>
       <Divider>Or</Divider>
       <CustomButtonGoogle
-        icon={<GoogleOutlined />}
+        icon={
+          <span role="img" className="anticon">
+            <GoogleSVG />
+          </span>
+        }
         size="large"
         block
         onClick={handleAuthorizeViaGoogle}

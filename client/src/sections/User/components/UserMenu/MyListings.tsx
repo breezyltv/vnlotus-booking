@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { useQuery } from "@apollo/react-hooks";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../../../../lib/auth/AuthProvider";
 import { Row, Col, Typography, Space, Empty, List } from "antd";
 import { ListingCard, SearchHeader, LoadingCard } from "../../../Common";
@@ -69,7 +70,13 @@ export const MyListings = () => {
       }}
       renderItem={(room) => (
         <List.Item>
-          <ListingCard key={room._id} room={room} loadingUserListings={false} />
+          <Link key={room._id} to={`/room/${room._id}`}>
+            <ListingCard
+              key={room._id}
+              room={room}
+              loadingUserListings={false}
+            />
+          </Link>
         </List.Item>
       )}
     />

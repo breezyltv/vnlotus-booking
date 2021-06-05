@@ -2,7 +2,9 @@ import styled from "styled-components";
 import { colorSchemes, Container } from "../../../styles";
 import { Row } from "antd";
 
-export const FooterContainer = styled(Container)``;
+export const FooterContainer = styled(Container)`
+  padding: 0 1rem;
+`;
 
 export const FooterStyled = styled.footer`
   margin-top: 2rem;

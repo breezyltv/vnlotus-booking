@@ -2,7 +2,7 @@ import {
   Redirect,
   Route,
   RouteProps,
-  RouteComponentProps,
+  //RouteComponentProps,
 } from "react-router-dom";
 
 export type ProtectedRouteProps = {

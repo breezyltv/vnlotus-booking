@@ -51,8 +51,8 @@ export const Instruction = () => {
           },
         ]}
       >
-        {services.map((item) => (
-          <Link to="/faq/">
+        {services.map((item, idx) => (
+          <Link key={idx} to="/faq/">
             <div>
               <Image alt="faq" src={item} preview={false} />
             </div>

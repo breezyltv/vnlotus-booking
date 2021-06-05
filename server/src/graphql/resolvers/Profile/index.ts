@@ -12,6 +12,6 @@ export const profileResolvers: IResolvers = {
   },
 
   Profile: {
-    id: (profile: Profile): string => profile._id.toHexString(),
+    id: (profile: Profile): string => profile._id.toString(),
   },
 };

@@ -14,6 +14,7 @@ import top3 from "../assets/top-destinations/location_6.png";
 import top4 from "../assets/top-destinations/location_7.jpg";
 import top5 from "../assets/top-destinations/location_22.png";
 import top6 from "../assets/top-destinations/location_31.png";
+
 const { Text, Title } = Typography;
 const topLocations = [top1, top2, top3, top4, top5, top6];
 export const TopDestinations = () => {
@@ -61,8 +62,8 @@ export const TopDestinations = () => {
           },
         ]}
       >
-        {topLocations.map((location) => (
-          <Link to="/rooms/top-destinations/">
+        {topLocations.map((location, idx) => (
+          <Link key={idx} to="/rooms/top-destinations/">
             <SlideMultiItemDiv>
               <SlideTopDestinationsContentDiv>
                 <Title level={3}>San Diego</Title>

@@ -4,7 +4,8 @@ import { Viewer } from "../../../lib/types";
 
 export const initViewer: Viewer = {
   id: null,
-  token: null,
+  accessToken: null,
+  refreshToken: null,
   displayName: null,
   avatar: null,
   hasWallet: null,

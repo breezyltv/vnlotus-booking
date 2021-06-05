@@ -10,7 +10,8 @@
 export interface SignOut_signOut {
   __typename: "Viewer";
   id: string | null;
-  token: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   displayName: string | null;
   avatar: string | null;
   hasWallet: boolean | null;

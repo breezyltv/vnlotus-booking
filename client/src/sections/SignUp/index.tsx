@@ -32,10 +32,16 @@ export const SignUp = ({ viewer, setViewer }: Props) => {
     { data: signInData, loading: signInLoading, error: signInError },
   ] = useMutation<SignInData, SignInVariables>(SIGN_IN, {
     onCompleted: (data) => {
-      if (data && data.signIn && data.signIn.token) {
+      if (
+        data &&
+        data.signIn &&
+        data.signIn.accessToken &&
+        data.signIn.refreshToken
+      ) {
         setViewer(data.signIn);
 
-        sessionStorage.setItem("token", data.signIn.token);
+        sessionStorage.setItem("accessToken", data.signIn.accessToken);
+        sessionStorage.setItem("refreshToken", data.signIn.refreshToken);
 
         displaySuccessNotification("You've successfully logged in!");
       }
@@ -55,7 +61,7 @@ export const SignUp = ({ viewer, setViewer }: Props) => {
     }
   }, []);
 
-  const handleSignUp = async () => {
+  const handleSignUpViaGoogle = async () => {
     try {
       const { data } = await client.query<AuthUrlData>({ query: AUTH_URL });
       window.location.href = data.authUrl;
@@ -66,13 +72,17 @@ export const SignUp = ({ viewer, setViewer }: Props) => {
     }
   };
 
+  const handleSignUpViaEmail = (data: any) => {
+    console.log(data);
+  };
+
   if (signInData && signInData.signIn) {
     const { id: viewerId } = signInData.signIn;
 
     return <Redirect to={`/user/${viewerId}`} />;
   }
 
-  if (viewer.token) {
+  if (viewer.accessToken) {
     return <Redirect to={`/user/${viewer.id}`} />;
   }
   const signInErrorBanner = signInError ? (
@@ -102,7 +112,10 @@ export const SignUp = ({ viewer, setViewer }: Props) => {
             md={{ span: 12, order: 1 }}
             lg={{ span: 8, order: 2 }}
           >
-            <SignUpForm handleSignUp={handleSignUp} />
+            <SignUpForm
+              handleSignUpViaGoogle={handleSignUpViaGoogle}
+              handleSignUpViaEmail={handleSignUpViaEmail}
+            />
           </Col>
         </Row>
       </SignUpContainer>

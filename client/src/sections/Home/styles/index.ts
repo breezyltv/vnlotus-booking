@@ -170,6 +170,7 @@ export const SlideContentDiv = styled.div`
 export const IntroHeaderSpace = styled.div`
   display: flex;
   justify-content: space-around;
+  align-items: flex-end;
   margin-top: -70px;
 
   .intro-header-detail {
@@ -187,9 +188,10 @@ export const IntroHeaderSpace = styled.div`
       font-size: 1.1em;
     }
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     flex-direction: column;
-    margin-top: -145px;
+    align-items: center;
+    margin-top: -110px;
     .intro-header-detail {
       padding: 0.8rem;
       margin: 15px 10px;
@@ -198,11 +200,12 @@ export const IntroHeaderSpace = styled.div`
       }
     }
   }
-  @media (max-width: 1024px) {
+  @media (max-width: 768px) {
     flex-direction: column;
-    margin-top: -110px;
+    align-items: center;
+    margin-top: -145px;
     .intro-header-detail {
-      padding: 0.8rem;
+      padding: 0.5rem;
       margin: 15px 10px;
       h2.ant-typography {
         font-size: 2em;

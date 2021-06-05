@@ -42,6 +42,15 @@ export const ListingCardWrapper = styled(Card)`
       font-weight: 600;
     }
   }
+  .ant-card-cover .ant-image-error:before {
+    content: "";
+    display: block;
+    width: 100%;
+    padding-top: 66.2069%;
+    img.ant-image-img {
+      z-index: -1;
+    }
+  }
 `;
 
 export const MetaInfoDiv = styled.div`
