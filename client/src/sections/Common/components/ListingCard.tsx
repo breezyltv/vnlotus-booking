@@ -30,7 +30,7 @@ export const ListingCard = ({
   loadingUserListings,
   hasWishlist,
 }: Props) => {
-  console.log(room);
+  //console.log(room);
 
   const [wishlist, setWishlist] = useState(false);
   const handleWishlist = () => {

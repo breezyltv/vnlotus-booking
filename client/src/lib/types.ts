@@ -1,6 +1,6 @@
 export interface Viewer {
   id: string | null;
-  token: string | null;
+  csrfToken: string | null;
   avatar: string | null;
   displayName: string | null;
   hasWallet: boolean | null;
@@ -26,4 +26,18 @@ export enum RoomType {
   RESORT = "resort",
   HOTEL = "hotel",
   HOMESTAY = "homestay",
+}
+
+export interface TokenUserData {
+  _id: string;
+  first_name: string | null | undefined;
+  last_name: string | null | undefined;
+  email: string;
+  provider: string;
+}
+
+export interface ITokenUser {
+  data: TokenUserData;
+  iat: number;
+  exp: number;
 }

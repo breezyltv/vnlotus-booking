@@ -7,27 +7,32 @@ import {
   CustomButtonGoogle,
 } from "../../../../styles";
 import { LoginCard, LoginHeader, LoginMeta } from "../../styles";
-import { MailOutlined, LockOutlined, GoogleOutlined } from "@ant-design/icons";
+import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { ReactComponent as GoogleSVG } from "../../../Common/assets/google-svg.svg";
 const { Title, Text } = Typography;
 interface Props {
-  handleSignUp: () => void;
+  handleSignUpViaGoogle: () => void;
+  handleSignUpViaEmail: (data: any) => void;
 }
-export const SignUpForm = ({ handleSignUp }: Props) => {
+export const SignUpForm = ({
+  handleSignUpViaGoogle,
+  handleSignUpViaEmail,
+}: Props) => {
   return (
     <LoginCard>
       <LoginHeader>
         <Title level={2}>Sign Up</Title>
         <Text>...for more experiences and benefits</Text>
       </LoginHeader>
-      <Form>
+      <Form onFinish={handleSignUpViaEmail}>
         <Form.Item
-          name="email"
+          name={["user", "email"]}
           rules={[{ required: true, message: "Please input your email!" }]}
         >
           <CustomInput placeholder="Email address" prefix={<MailOutlined />} />
         </Form.Item>
         <Form.Item
-          name="first_name"
+          name={["user", "first_name"]}
           rules={[
             {
               required: true,
@@ -48,7 +53,7 @@ export const SignUpForm = ({ handleSignUp }: Props) => {
         </Form.Item>
 
         <Form.Item
-          name="last_name"
+          name={["user", "last_name"]}
           rules={[
             {
               required: true,
@@ -68,7 +73,7 @@ export const SignUpForm = ({ handleSignUp }: Props) => {
           <CustomInput placeholder="Last name" />
         </Form.Item>
         <Form.Item
-          name="password"
+          name={["user", "password"]}
           rules={[{ required: true, message: "Please input your password!" }]}
         >
           <CustomInputPassword
@@ -77,7 +82,7 @@ export const SignUpForm = ({ handleSignUp }: Props) => {
           />
         </Form.Item>
         <Form.Item
-          name="confirmPassword"
+          name={["user", "confirm_password"]}
           rules={[{ required: true, message: "Please input your password!" }]}
         >
           <CustomInputPassword
@@ -105,10 +110,14 @@ export const SignUpForm = ({ handleSignUp }: Props) => {
       </LoginMeta>
       <Divider>Or</Divider>
       <CustomButtonGoogle
-        icon={<GoogleOutlined />}
+        icon={
+          <span role="img" className="anticon">
+            <GoogleSVG />
+          </span>
+        }
         size="large"
         block
-        onClick={handleSignUp}
+        onClick={handleSignUpViaGoogle}
       >
         Sign In with Google
       </CustomButtonGoogle>

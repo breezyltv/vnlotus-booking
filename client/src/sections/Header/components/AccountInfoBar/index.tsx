@@ -26,7 +26,7 @@ export const AccountInfoBar = ({ viewer, setViewer }: Props) => {
       onCompleted: (data) => {
         if (data && data.signOut) {
           setViewer(data.signOut);
-          sessionStorage.removeItem("token");
+          sessionStorage.removeItem("csrfToken");
           displaySuccessNotification("You've successfully signed out!");
         }
       },

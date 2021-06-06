@@ -11,7 +11,6 @@ import { Gender } from "../../../../lib/api/graphql/globalTypes";
 import {
   Form,
   Input,
-  Button,
   DatePicker,
   Upload,
   message,
@@ -75,7 +74,7 @@ export const UpdateProfile = ({ user }: Props) => {
   //     errors: null,
   //   },
   // });
-  console.log(user);
+  //console.log(user);
 
   const [updateUser, { loading: updateUserLoading, error: updateUserError }] =
     useMutation<UserUpdateReturnType, UpdatingUserVariables>(UPDATING_USER, {

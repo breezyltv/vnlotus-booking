@@ -2,7 +2,7 @@ import { IResolvers } from "apollo-server-express";
 //import { UserInputError } from 'apollo-server';
 import * as yup from "yup";
 import { Database, User } from "../../../lib/types";
-import { authorize, formatYupError } from "../../../lib/utils";
+import { authorizeAccessToken, formatYupError } from "../../../lib/utils";
 import {
   UserArgs,
   UserUpdateArgs,
@@ -28,7 +28,7 @@ export const userResolvers: IResolvers = {
           throw new Error("User can't be found");
         }
         // check if request is authorized
-        const viewer = await authorize(db, req);
+        const viewer = await authorizeAccessToken(db, req);
         if (viewer && viewer._id === user._id) {
           user.authorized = true;
         }
@@ -44,7 +44,7 @@ export const userResolvers: IResolvers = {
       { user }: UserUpdateArgs,
       { db, req }: { db: Database; req: Request }
     ): Promise<UserUpdateReturnType> => {
-      console.log(user);
+      //console.log(user);
 
       const birthday =
         user.birthday &&
@@ -54,9 +54,9 @@ export const userResolvers: IResolvers = {
 
       try {
         // check if request is authorized
-        const viewer = await authorize(db, req);
-        if (viewer && viewer._id !== user._id) {
-          throw new Error(`This request is unauthorized! id: ${user._id}`);
+        const viewer = await authorizeAccessToken(db, req);
+        if (!viewer) {
+          throw new Error(`This request is not authorized!`);
         }
         //validate inputs with Yup
         await UserUpdateRules.validate(user, { abortEarly: false });
@@ -93,7 +93,7 @@ export const userResolvers: IResolvers = {
       if (!updateResult.value) {
         throw new Error("Failed to update user profile");
       }
-      console.log(updateResult.value);
+      //console.log(updateResult.value);
 
       return {
         data: updateResult.value,
@@ -135,7 +135,7 @@ export const userResolvers: IResolvers = {
         data.result = await cursor.toArray();
         return data;
       } catch (error) {
-        throw new Error(`Failed to query bookings: ${error}`);
+        throw new Error(`Failed to query user's bookings: ${error}`);
       }
     },
     rooms: async (
@@ -160,7 +160,7 @@ export const userResolvers: IResolvers = {
         data.result = await cursor.toArray();
         return data;
       } catch (error) {
-        throw new Error(`Failed to query rooms: ${error}`);
+        throw new Error(`Failed to query user's rooms: ${error}`);
       }
     },
   },

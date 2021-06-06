@@ -32,7 +32,7 @@ export const RightNav = ({ mode, viewer, setViewer }: Props) => {
     onCompleted: (data) => {
       if (data && data.signOut) {
         setViewer(data.signOut);
-        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("csrfToken");
         displaySuccessNotification("You've successfully signed out!");
       }
     },
@@ -65,8 +65,12 @@ export const RightNav = ({ mode, viewer, setViewer }: Props) => {
             </MenuUserLink>
           </Dropdown>
         </Menu.Item>
-        <Menu.Item key="signOut" icon={<LogoutOutlined />}>
-          <a onClick={handleSignOut}>Sign Out</a>
+        <Menu.Item
+          key="signOut"
+          icon={<LogoutOutlined />}
+          onClick={handleSignOut}
+        >
+          Sign Out
         </Menu.Item>
       </>
     ) : (

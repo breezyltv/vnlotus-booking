@@ -29,6 +29,11 @@ export const typeDefs = gql`
     result: [Booking!]!
   }
 
+  enum RoomsFilter {
+    PRICE_LOW_TO_HIGH
+    PRICE_HIGH_TO_LOW
+  }
+
   enum RoomType {
     APARTMENT
     HOUSE
@@ -145,7 +150,7 @@ export const typeDefs = gql`
   }
   type Viewer {
     id: ID
-    token: String
+    csrfToken: String
     displayName: String
     avatar: String
     hasWallet: Boolean
@@ -176,17 +181,40 @@ export const typeDefs = gql`
     errors: [YupError!]
   }
 
+  input RegisterUserInput {
+    email: String!
+    first_name: String!
+    last_name: String!
+    password: String!
+    confirm_password: String!
+    login_type: LoginType!
+  }
+
+  type RegisterGQLType {
+    data: Viewer
+    errors: [YupError!]
+  }
+
   type Query {
     authUrl: String!
     listings: [Listing!]!
     profile: [Profile!]!
     user(id: ID!): User!
+    room(id: ID!): Room!
+    roomsByLocation(
+      location: String
+      filter: RoomsFilter!
+      limit: Int!
+      page: Int!
+    ): [Room!]!
   }
 
   type Mutation {
+    register(user: RegisterUserInput): RegisterGQLType!
     signIn(input: SignInInput): Viewer!
     signOut: Viewer!
     deleteListing(id: ID!): Listing!
     updateUser(user: UserUpdateInput!): UserUpdateGQLReturnType
+    refreshToken: String!
   }
 `;

@@ -59,12 +59,18 @@ export const GlobalStyle = createGlobalStyle`
     .ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused {
       box-shadow: 0 0 0 2px rgba(253, 181, 27, 0.2);;
     } */
-    .ant-menu-horizontal > .ant-menu-item-selected a{
+     .ant-menu-horizontal > .ant-menu-item-selected a{
       color: ${colorSchemes["drk-yellow"]};
     }
+    .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected, 
+    .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active, 
+    .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active:hover{
+      color: ${colorSchemes["drk-yellow"]};
+      border-bottom: 2px solid ${colorSchemes["second-main-color"]};
+    }
     .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover.ant-affix, 
-    .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active:hover,
-    .ant-menu-horizontal > .ant-menu-item a:hover{
+    
+    .ant-menu-horizontal > .ant-menu-item a:hover, .ant-menu-item a:hover, .ant-menu-item-active:hover{
       color: ${colorSchemes["drk-yellow"]};
     }
 

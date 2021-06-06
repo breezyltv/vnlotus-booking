@@ -1,5 +1,4 @@
 import { Skeleton } from "antd";
-import Avatar from "antd/lib/avatar/avatar";
 
 interface Props {
   numberOfSkeletons?: number;

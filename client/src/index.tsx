@@ -8,9 +8,15 @@ import {
   Route,
   //RouteComponentProps,
 } from "react-router-dom";
-import ApolloClient from "apollo-boost";
+
+import { from, fromPromise, InMemoryCache } from "apollo-boost";
+import { createHttpLink } from "apollo-link-http";
+import ApolloClient from "apollo-client";
+import { onError } from "apollo-link-error";
+import { setContext } from "apollo-link-context";
 import { ApolloProvider } from "react-apollo";
 import { useMutation } from "@apollo/react-hooks";
+import { TokenRefreshLink } from "apollo-link-token-refresh";
 
 import {
   Header,
@@ -27,11 +33,14 @@ import {
   MyListings,
 } from "./sections";
 import { HeaderSkeleton, ErrorBanner } from "./lib/components";
+import { displayErrorNotification } from "./lib/utils";
 import {
   SIGN_IN,
   SignIn as SignInData,
   SignInVariables,
+  REFRESH_TOKEN,
 } from "./lib/api/graphql/mutations";
+
 //import "./styles/index.css";
 import { GlobalStyle, ContentSpinner, SpinnerStyled } from "./styles";
 import { Viewer, SettingLeftBarType } from "./lib/types";
@@ -42,16 +51,146 @@ import reportWebVitals from "./reportWebVitals";
 
 const spinIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
 
-const client = new ApolloClient({
+let isRefreshingToken = false;
+let pendingRequests: any = [];
+
+//handle concurrent Requests
+//Only refresh the token once
+const resolvePendingRequests = () => {
+  pendingRequests.map((callback: any) => callback());
+  pendingRequests = [];
+};
+
+const errorLink = onError(
+  ({ graphQLErrors, networkError, operation, forward }) => {
+    if (graphQLErrors) {
+      //console.log(graphQLErrors);
+
+      for (let err of graphQLErrors) {
+        // handle errors differently based on its error code
+        switch (err.extensions && err.extensions.code) {
+          case "UNAUTHENTICATED":
+            //displayErrorNotification("401 Unauthorized", err.message);
+            // old token has expired throwing AuthenticationError,
+            // one way to handle is to obtain a new token and
+            // add it to the operation context
+            let forward$;
+            //get refreshToken
+            if (!isRefreshingToken) {
+              isRefreshingToken = true;
+              forward$ = fromPromise(
+                client
+                  .mutate({
+                    mutation: REFRESH_TOKEN,
+                  })
+                  .then(({ data }: any) => {
+                    console.log("call refresh token ->>", data);
+                    if (data && data.refreshToken) {
+                      sessionStorage.setItem("csrfToken", data.refreshToken);
+                      const headers = operation.getContext().headers;
+                      operation.setContext({
+                        headers: {
+                          ...headers,
+                          "X-CSRF-TOKEN": data.refreshToken || "",
+                        },
+                      });
+                    } else {
+                      sessionStorage.removeItem("csrfToken");
+                    }
+                    return true;
+                  })
+                  .then(() => {
+                    resolvePendingRequests();
+                    return true;
+                  })
+                  .catch(() => {
+                    pendingRequests = [];
+                    return false;
+                  })
+                  .finally(() => {
+                    isRefreshingToken = false;
+                  })
+              );
+            } else {
+              //only emit once the Promise is resolved
+              forward$ = fromPromise(
+                new Promise<void>((resolve) => {
+                  pendingRequests.push(() => resolve());
+                })
+              );
+            }
+            // Now, pass the modified operation to the next link
+            // in the chain. This effectively intercepts the old
+            // failed request, and retries it with a new token
+            return forward$.flatMap(() => forward(operation));
+
+          case "FORBIDDEN":
+            displayErrorNotification("403 FORBIDDEN", err.message);
+            return forward(operation);
+        }
+      }
+    }
+    if (networkError) {
+      console.log(`[Network error]: ${networkError}`);
+    }
+  }
+);
+const httpLink = createHttpLink({
   uri: "/api",
-  request: async (operation) => {
-    const token = sessionStorage.getItem("token");
-    operation.setContext({
+  credentials: "include",
+});
+
+//set token to headers
+const authLink = setContext(async () => {
+  const csrfToken = sessionStorage.getItem("csrfToken");
+  return {
+    headers: {
+      "X-CSRF-TOKEN": csrfToken || "",
+    },
+  };
+});
+
+// a middleware to handle expired token before send request
+const refreshTokenMiddleware: any = new TokenRefreshLink({
+  //the refresh token field name which data returns from backend
+  accessTokenField: "refreshToken",
+  isTokenValidOrUndefined: () =>
+    sessionStorage.getItem("csrfToken") ? false : true,
+  fetchAccessToken: async () => {
+    console.log("[refreshTokenMiddleware] getting new token...");
+
+    return fetch("/api", {
+      method: "POST",
       headers: {
-        "X-CSRF-TOKEN": token || "",
+        "Content-Type": "application/json",
+        "X-CSRF-TOKEN": sessionStorage.getItem("csrfToken") as string,
       },
+      body: JSON.stringify({
+        query: `
+        mutation {
+          refreshToken
+        }
+        `,
+      }),
     });
   },
+  handleFetch: (csrfToken) => {
+    console.log(
+      "[refreshTokenMiddleware] got new csrfToken and set in sessionStorage!"
+    );
+    sessionStorage.setItem("csrfToken", csrfToken);
+  },
+  handleError: (err) => {
+    //console.warn("Your refresh token is invalid. Try to relogin");
+    console.error(err);
+  },
+});
+
+const cache = new InMemoryCache();
+
+const client = new ApolloClient({
+  link: from([refreshTokenMiddleware, errorLink, authLink, httpLink]),
+  cache,
 });
 
 const App = () => {
@@ -62,13 +201,19 @@ const App = () => {
     {
       onCompleted: (data) => {
         if (data && data.signIn) {
-          //console.log(data.signIn);
+          console.log(data.signIn);
           setViewer(data.signIn);
-          if (data.signIn.token) {
-            sessionStorage.setItem("token", data.signIn.token);
+          if (data.signIn.csrfToken) {
+            sessionStorage.setItem("csrfToken", data.signIn.csrfToken);
           } else {
-            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("csrfToken");
           }
+        }
+      },
+
+      onError: ({ graphQLErrors }) => {
+        if (graphQLErrors) {
+          console.log(graphQLErrors);
         }
       },
     }
@@ -82,7 +227,7 @@ const App = () => {
     signInRef.current();
   }, []);
 
-  if (!viewer.didRequest && !error) {
+  if (!viewer.didRequest && !error && !isRefreshingToken) {
     return (
       <Layout>
         <HeaderSkeleton />
@@ -97,12 +242,13 @@ const App = () => {
       </Layout>
     );
   }
+  //console.log(error);
 
   const signInErrorBanner = error ? (
     <ErrorBanner description="We weren't able to verify if you were signed in. Please try again later!" />
   ) : null;
 
-  const isAuthenticated = viewer.id && viewer.token ? true : false;
+  const isAuthenticated = viewer.id && viewer.csrfToken ? true : false;
   // interface IdParams {
   //   id: string;
   // }
@@ -118,7 +264,7 @@ const App = () => {
           <Route exact path="/" component={Home} />
           <Route exact path="/host" component={Host} />
           <Route exact path="/Room/:id" component={RoomDetail} />
-          <Route exact path="/Rooms/:location?" component={Rooms} />
+          <Route exact path="/Rooms/location/:location" component={Rooms} />
           <PrivateRoute
             exact
             path="/user/edit-account/profile/:id"
