@@ -74,7 +74,7 @@ Clone project and in the project directories, you can run this command for each 
 - GraphQL API endpoint:\
   Open [http://localhost:8080/api](http://localhost:8080/api)
 - GraphQL API in Production:\
-  Open [http://localhost:8080/playground](http://localhost:8080/graphql)
+  Open [http://localhost:8080/graphql](http://localhost:8080/graphql)
 
 # :building_construction: Demo:
 
