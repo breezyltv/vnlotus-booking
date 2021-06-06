@@ -27,6 +27,7 @@ const cookieOpts = {
 
 const signInViaGoogle = async (
   code: string,
+  csrfToken: string,
   db: Database,
   res: Response
 ): Promise<User | undefined> => {
@@ -70,6 +71,7 @@ const signInViaGoogle = async (
     first_name: firstName,
     last_name: lastName,
     email: userEmail,
+    csrfToken,
     provider: LoginProvider.GOOGLE,
   };
   const accessToken = await generateToken(
@@ -86,7 +88,7 @@ const signInViaGoogle = async (
   if (!accessToken || !refreshToken) {
     throw new Error("Could not generate token!");
   }
-
+  //check if user already exists
   const updateRes = await db.users.findOneAndUpdate(
     { _id: userId },
     {
@@ -96,6 +98,7 @@ const signInViaGoogle = async (
         email: userEmail,
         accessToken,
         refreshToken,
+        csrfToken,
       },
     },
     { returnOriginal: false }
@@ -106,6 +109,7 @@ const signInViaGoogle = async (
       _id: userId,
       accessToken,
       refreshToken,
+      csrfToken,
       displayName: userName,
       first_name: firstName,
       last_name: lastName,
@@ -134,6 +138,7 @@ const signInViaGoogle = async (
 
 const signInViaCookie = async (
   db: Database,
+  csrfToken: string,
   req: Request,
   res: Response
 ): Promise<User | null> => {
@@ -218,17 +223,18 @@ export const viewerResolvers: IResolvers = {
       try {
         //check Google auth0 code
         const code = input ? input.code : null;
+        //create csrfToken every time sign in
+        const csrfToken = crypto.randomBytes(16).toString("hex");
 
         const viewer = code
-          ? await signInViaGoogle(code, db, res)
-          : await signInViaCookie(db, req, res);
+          ? await signInViaGoogle(code, csrfToken, db, res)
+          : await signInViaCookie(db, csrfToken, req, res);
         if (!viewer) {
           return { didRequest: true };
         }
         return {
           _id: viewer._id,
-          accessToken: viewer.accessToken,
-          refreshToken: viewer.refreshToken,
+          csrfToken: viewer.csrfToken,
           displayName: viewer.displayName,
           avatar: viewer.avatar,
           walletId: viewer.walletId,
@@ -251,11 +257,10 @@ export const viewerResolvers: IResolvers = {
       _args: {},
       { res }: { res: Response }
     ): Viewer => {
-      console.log("try to log out!");
-
       try {
         res.clearCookie("accessToken", cookieOpts);
         res.clearCookie("refreshToken", cookieOpts);
+        console.log("try to log out... PASSED!");
         return { didRequest: true };
       } catch (error) {
         throw new Error(`Failed to sign out: ${error}`);
@@ -269,18 +274,30 @@ export const viewerResolvers: IResolvers = {
     ): Promise<string | null> => {
       try {
         const refreshToken = req.signedCookies.refreshToken;
-        console.log(
-          "try to refresh token...!",
-          refreshToken ? "True" : "False"
-        );
-        if (!refreshToken) {
-          //res.clearCookie("viewer", cookieOpts);
+
+        const csrfToken = req.get("X-CSRF-TOKEN");
+        //console.log("[refreshToken] try to refresh token ", refreshToken);
+        //console.log("[refreshToken] try to csrfToken ", csrfToken);
+        if (!refreshToken || !csrfToken) {
+          console.log(
+            "[refreshToken] try to refresh token and csrfToken... FAILED!"
+          );
           throw new ForbiddenError("Access denied, token missing!");
         }
+        console.log(
+          "[refreshToken] try to refresh token and csrfToken... PASSED!"
+        );
         //decode if refresh token is valid
         const decodedToken = await verifyToken(
           refreshToken,
           process.env.SECRET_REFRESH_TOKEN || keys.secretRefreshToken
+        );
+
+        if (decodedToken.data.csrfToken !== csrfToken) {
+          throw new ForbiddenError("Access denied, token missing!");
+        }
+        console.log(
+          "[refreshToken] checking csrfToken in headers and in access token... PASSED!"
         );
 
         //console.log("decode refresh token!", decodedToken);
@@ -293,8 +310,16 @@ export const viewerResolvers: IResolvers = {
         if (!viewer) {
           res.clearCookie("accessToken", cookieOpts);
           res.clearCookie("refreshToken", cookieOpts);
-          throw new AuthenticationError("Token is expired!");
+          throw new AuthenticationError(
+            "Token is expired, please login again!"
+          );
         }
+
+        console.log("[refreshToken] generating new csrf and access token...!");
+
+        //generate new csrfToken
+        const newCSRFToken = crypto.randomBytes(16).toString("hex");
+
         //generate new access token here
         const accessToken = await generateToken(
           {
@@ -302,6 +327,7 @@ export const viewerResolvers: IResolvers = {
             first_name: viewer.first_name,
             last_name: viewer.last_name,
             email: viewer.email,
+            csrfToken: newCSRFToken,
             provider: viewer.provider,
           },
           process.env.SECRET || keys.secretKey,
@@ -310,19 +336,19 @@ export const viewerResolvers: IResolvers = {
         if (!accessToken) {
           throw new Error("Failed to generate an access token!");
         }
-        //console.log("new access token", accessToken);
+
         //set new token to cookie
         res.cookie("accessToken", accessToken, {
           ...cookieOpts,
           maxAge: 365 * 24 * 60 * 60 * 1000,
         });
-
-        //update new token
+        //update new token and csrfToken
         let updateResult = await db.users.findOneAndUpdate(
           { _id: decodedToken.data._id },
           {
             $set: {
               accessToken,
+              csrfToken,
             },
           },
           { returnOriginal: false }
@@ -331,7 +357,10 @@ export const viewerResolvers: IResolvers = {
           res.clearCookie("accessToken", cookieOpts);
           throw new Error("Could not generate new token!");
         }
-        return accessToken;
+        console.log(
+          "[refreshToken] new access token has been created and set in cookies! PASSED"
+        );
+        return csrfToken;
       } catch (error) {
         throw error;
       }

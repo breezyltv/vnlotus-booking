@@ -16,7 +16,6 @@ import { onError } from "apollo-link-error";
 import { setContext } from "apollo-link-context";
 import { ApolloProvider } from "react-apollo";
 import { useMutation } from "@apollo/react-hooks";
-import jwt_decode from "jwt-decode";
 import { TokenRefreshLink } from "apollo-link-token-refresh";
 
 import {
@@ -44,7 +43,7 @@ import {
 
 //import "./styles/index.css";
 import { GlobalStyle, ContentSpinner, SpinnerStyled } from "./styles";
-import { Viewer, SettingLeftBarType, ITokenUser } from "./lib/types";
+import { Viewer, SettingLeftBarType } from "./lib/types";
 import { initViewer, AuthContext, PrivateRoute } from "./lib/auth";
 import reportWebVitals from "./reportWebVitals";
 
@@ -87,7 +86,7 @@ const errorLink = onError(
                   .then(({ data }: any) => {
                     console.log("call refresh token ->>", data);
                     if (data && data.refreshToken) {
-                      sessionStorage.setItem("accessToken", data.refreshToken);
+                      sessionStorage.setItem("csrfToken", data.refreshToken);
                       const headers = operation.getContext().headers;
                       operation.setContext({
                         headers: {
@@ -96,8 +95,7 @@ const errorLink = onError(
                         },
                       });
                     } else {
-                      sessionStorage.removeItem("accessToken");
-                      sessionStorage.removeItem("refreshToken");
+                      sessionStorage.removeItem("csrfToken");
                     }
                     return true;
                   })
@@ -144,35 +142,20 @@ const httpLink = createHttpLink({
 
 //set token to headers
 const authLink = setContext(async () => {
-  const token = sessionStorage.getItem("accessToken");
-  const refreshToken = sessionStorage.getItem("refreshToken");
+  const csrfToken = sessionStorage.getItem("csrfToken");
   return {
     headers: {
-      "X-CSRF-TOKEN": token || "",
-      "X-CSRF-REFRESH-TOKEN": refreshToken || "",
+      "X-CSRF-TOKEN": csrfToken || "",
     },
   };
 });
-
-const isTokenExpired = (): boolean => {
-  const accessToken = sessionStorage.getItem("accessToken");
-  if (!accessToken) {
-    return false;
-  }
-  const currentDate = new Date();
-  const decodedToken = jwt_decode<ITokenUser>(accessToken);
-  console.log(
-    "[isTokenExpired] Check Token before send the request to server...",
-    decodedToken
-  );
-  return decodedToken.exp * 1000 < currentDate.getTime() ? true : false;
-};
 
 // a middleware to handle expired token before send request
 const refreshTokenMiddleware: any = new TokenRefreshLink({
   //the refresh token field name which data returns from backend
   accessTokenField: "refreshToken",
-  isTokenValidOrUndefined: () => !isTokenExpired(),
+  isTokenValidOrUndefined: () =>
+    sessionStorage.getItem("csrfToken") ? false : true,
   fetchAccessToken: async () => {
     console.log("[refreshTokenMiddleware] getting new token...");
 
@@ -180,6 +163,7 @@ const refreshTokenMiddleware: any = new TokenRefreshLink({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-CSRF-TOKEN": sessionStorage.getItem("csrfToken") as string,
       },
       body: JSON.stringify({
         query: `
@@ -190,9 +174,11 @@ const refreshTokenMiddleware: any = new TokenRefreshLink({
       }),
     });
   },
-  handleFetch: (accessToken) => {
-    console.log("[refreshTokenMiddleware] got new token!");
-    sessionStorage.setItem("accessToken", accessToken);
+  handleFetch: (csrfToken) => {
+    console.log(
+      "[refreshTokenMiddleware] got new csrfToken and set in sessionStorage!"
+    );
+    sessionStorage.setItem("csrfToken", csrfToken);
   },
   handleError: (err) => {
     //console.warn("Your refresh token is invalid. Try to relogin");
@@ -217,12 +203,10 @@ const App = () => {
         if (data && data.signIn) {
           console.log(data.signIn);
           setViewer(data.signIn);
-          if (data.signIn.accessToken && data.signIn.refreshToken) {
-            sessionStorage.setItem("accessToken", data.signIn.accessToken);
-            sessionStorage.setItem("refreshToken", data.signIn.refreshToken);
+          if (data.signIn.csrfToken) {
+            sessionStorage.setItem("csrfToken", data.signIn.csrfToken);
           } else {
-            sessionStorage.removeItem("accessToken");
-            sessionStorage.removeItem("refreshToken");
+            sessionStorage.removeItem("csrfToken");
           }
         }
       },
@@ -264,7 +248,7 @@ const App = () => {
     <ErrorBanner description="We weren't able to verify if you were signed in. Please try again later!" />
   ) : null;
 
-  const isAuthenticated = viewer.id && viewer.accessToken ? true : false;
+  const isAuthenticated = viewer.id && viewer.csrfToken ? true : false;
   // interface IdParams {
   //   id: string;
   // }

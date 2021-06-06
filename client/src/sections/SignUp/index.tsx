@@ -32,16 +32,10 @@ export const SignUp = ({ viewer, setViewer }: Props) => {
     { data: signInData, loading: signInLoading, error: signInError },
   ] = useMutation<SignInData, SignInVariables>(SIGN_IN, {
     onCompleted: (data) => {
-      if (
-        data &&
-        data.signIn &&
-        data.signIn.accessToken &&
-        data.signIn.refreshToken
-      ) {
+      if (data && data.signIn && data.signIn.csrfToken) {
         setViewer(data.signIn);
 
-        sessionStorage.setItem("accessToken", data.signIn.accessToken);
-        sessionStorage.setItem("refreshToken", data.signIn.refreshToken);
+        sessionStorage.setItem("csrfToken", data.signIn.csrfToken);
 
         displaySuccessNotification("You've successfully logged in!");
       }
@@ -82,7 +76,7 @@ export const SignUp = ({ viewer, setViewer }: Props) => {
     return <Redirect to={`/user/${viewerId}`} />;
   }
 
-  if (viewer.accessToken) {
+  if (viewer.csrfToken) {
     return <Redirect to={`/user/${viewer.id}`} />;
   }
   const signInErrorBanner = signInError ? (

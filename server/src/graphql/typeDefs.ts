@@ -150,8 +150,7 @@ export const typeDefs = gql`
   }
   type Viewer {
     id: ID
-    accessToken: String
-    refreshToken: String
+    csrfToken: String
     displayName: String
     avatar: String
     hasWallet: Boolean

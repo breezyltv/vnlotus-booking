@@ -20,7 +20,8 @@
 - Handling login Google's OAuth 2.0
 - Validation: Yup
 - Cookie-parser: store token in cookie for more security and avoid XSS attack
-- Jwt token: sign a access token and refresh token for user/ set expired time :white_check_mark:
+- Jwt token: sign an access token and refresh token for user/ set expired time :white_check_mark:
+- Generate a CSRF Token with Crypto for every requests to avoid CSRF attack :white_check_mark:
 - bcryptjs: Encrypt password (planning for local account) :building_construction:
 
 ### Frontend:
@@ -28,10 +29,9 @@
 - Functional component
 - UI framework: Ant Design
 - Styled Components: help customize antd's components
-- Using sessionStorage to store access token and refresh token
-- Set both tokens in headers to avoid CSRF attack
 - Apollo client
-- apollo-link-token-refresh: a Apollo Link middleware to handle expired access token before send request
+- Using sessionStorage to store CSRF token
+- apollo-link-token-refresh: an Apollo Link middleware to call refeshToken api\ to handle expired access token and CSRF Token before do others authorized requests :white_check_mark:
 - RxJS: handling dynamic search with debounce. (planning for practicing) :building_construction:
 
 ### DevOps:

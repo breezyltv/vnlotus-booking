@@ -4,8 +4,7 @@ export const SIGN_IN = gql`
   mutation SignIn($input: SignInInput) {
     signIn(input: $input) {
       id
-      accessToken
-      refreshToken
+      csrfToken
       displayName
       avatar
       hasWallet

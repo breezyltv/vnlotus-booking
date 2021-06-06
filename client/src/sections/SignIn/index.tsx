@@ -37,16 +37,10 @@ export const SignIn = ({ viewer, setViewer }: Props) => {
     onCompleted: (data) => {
       console.log("after logged in: ", data);
 
-      if (
-        data &&
-        data.signIn &&
-        data.signIn.accessToken &&
-        data.signIn.refreshToken
-      ) {
+      if (data && data.signIn && data.signIn.csrfToken) {
         setViewer(data.signIn);
 
-        sessionStorage.setItem("accessToken", data.signIn.accessToken);
-        sessionStorage.setItem("refreshToken", data.signIn.refreshToken);
+        sessionStorage.setItem("csrfToken", data.signIn.csrfToken);
 
         displaySuccessNotification("You've successfully logged in!");
       }
@@ -97,7 +91,7 @@ export const SignIn = ({ viewer, setViewer }: Props) => {
     return <Redirect to={`/user/edit-account/profile/${viewerId}`} />;
   }
 
-  if (viewer.accessToken) {
+  if (viewer.csrfToken) {
     return <Redirect to={`/user/edit-account/profile/${viewer.id}`} />;
   }
   const signInErrorBanner = signInError ? (

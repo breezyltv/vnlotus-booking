@@ -32,8 +32,7 @@ export const RightNav = ({ mode, viewer, setViewer }: Props) => {
     onCompleted: (data) => {
       if (data && data.signOut) {
         setViewer(data.signOut);
-        sessionStorage.removeItem("accessToken");
-        sessionStorage.removeItem("refreshToken");
+        sessionStorage.removeItem("csrfToken");
         displaySuccessNotification("You've successfully signed out!");
       }
     },

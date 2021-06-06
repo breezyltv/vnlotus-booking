@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 const mount = async (app: Application) => {
   const db = await connectDatabase();
 
-  app.use(cors());
+  app.use(cors({ credentials: true, origin: `${process.env.PUBLIC_URL}` }));
   app.use(cookieParser(process.env.SECRET));
   app.use(express.json());
 

@@ -12,23 +12,40 @@ export const authorizeAccessToken = async (
   db: Database,
   req: Request
 ): Promise<User | null> => {
-  const accessToken = req.get("X-CSRF-TOKEN");
-  console.log("get X-CSRF-TOKEN...", accessToken ? "True" : "False");
-  debuglog("get X-CSRF-TOKEN...", [accessToken ? "True" : "False"]);
+  const csrfToken = req.get("X-CSRF-TOKEN");
+  const accessToken = req.signedCookies.accessToken;
+  console.log(
+    "[authorizeAccessToken] get X-CSRF-TOKEN...",
+    csrfToken ? "PASSED" : "FAILED"
+  );
+  console.log(
+    "[authorizeAccessToken] get access token in headers...",
+    csrfToken ? "PASSED" : "FAILED"
+  );
+  debuglog(
+    "[authorizeAccessToken]get X-CSRF-TOKEN...",
+    csrfToken ? "PASSED" : "FAILED"
+  );
 
-  if (accessToken) {
+  if (accessToken && csrfToken) {
     const decodedToken = await verifyToken(
       accessToken,
       process.env.SECRET || keys.secretKey
     );
-    debuglog("decode X-CSRF-TOKEN...", [decodedToken ? "True" : "False"]);
+    debuglog("[authorizeAccessToken] decode accessToken...", [
+      decodedToken ? "PASSED" : "FAILED",
+    ]);
     const viewer = await db.users.findOne({
       _id: decodedToken.data._id,
       accessToken,
+      csrfToken,
     });
+    if (!viewer) {
+      return null;
+    }
     console.log(
       "[authorizeAccessToken] get viewer...",
-      viewer ? "True" : "False"
+      viewer ? "PASSED" : "FAILED"
     );
 
     return viewer;
@@ -46,8 +63,8 @@ export const authorizeRefreshToken = async (
     refreshToken,
   });
   console.log(
-    "[authorizeToken]: check id and refresh token in database...",
-    viewer ? "True" : "False"
+    "[authorizeRefreshToken]: check id and refresh token in database...",
+    viewer ? "PASSED" : "FAILED"
   );
 
   if (!viewer) {
@@ -63,14 +80,6 @@ export const generateToken = (
   tokenLife: string
 ): Promise<string | undefined> => {
   return new Promise((resolve, reject) => {
-    // const userData = {
-    //   _id: user._id,
-    //   first_name: user.first_name,
-    //   last_name: user.last_name,
-    //   email: user.email,
-    //   provider: user.provider,
-    // };
-
     jwt.sign(
       { data: user },
       secretSignature,

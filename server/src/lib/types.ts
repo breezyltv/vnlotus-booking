@@ -19,6 +19,7 @@ export interface TokenUserData {
   first_name: string | null | undefined;
   last_name: string | null | undefined;
   email: string;
+  csrfToken: string;
   provider: string;
 }
 
@@ -83,6 +84,7 @@ export interface User {
   _id: string;
   accessToken: string;
   refreshToken: string;
+  csrfToken: string;
   provider: LoginProvider;
   displayName?: string;
   first_name: string | null | undefined;
@@ -159,8 +161,7 @@ export interface SkillsType {
 
 export interface Viewer {
   _id?: string;
-  accessToken?: string;
-  refreshToken?: string;
+  csrfToken?: string;
   avatar?: string;
   walletId?: string;
   didRequest: boolean;

@@ -1,7 +1,6 @@
 export interface Viewer {
   id: string | null;
-  accessToken: string | null;
-  refreshToken: string | null;
+  csrfToken: string | null;
   avatar: string | null;
   displayName: string | null;
   hasWallet: boolean | null;
