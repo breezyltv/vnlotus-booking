@@ -31,7 +31,7 @@
 - Styled Components: help customize antd's components
 - Apollo client
 - Using sessionStorage to store CSRF token
-- apollo-link-token-refresh: an Apollo Link middleware to call refeshToken api\ to handle expired access token and CSRF Token before do others authorized requests :white_check_mark:
+- apollo-link-token-refresh: an Apollo Link middleware to call refeshToken api to handle expired access token and CSRF Token before do others authorized requests :white_check_mark:
 - RxJS: handling dynamic search with debounce. (planning for practicing) :building_construction:
 
 ### DevOps:
