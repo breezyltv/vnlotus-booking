@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/react-hooks";
-import { User_user as UserType } from "../../../../lib/api/graphql/queries/";
+import { User_user as UserType } from "../../../../lib/api/graphql/queries";
 import {
   UPDATING_USER,
   UpdatingUser as UserUpdateReturnType,
@@ -25,7 +25,10 @@ import {
   displaySuccessNotification,
   displayErrorMessage,
   displayErrorNotification,
+  haveSameObjects,
+  showErrorsBackend,
 } from "../../../../lib/utils";
+import { IValidateMess } from "../../../../lib/types";
 import { CustomButtonPrimary } from "../../../../styles";
 import { ErrorBanner } from "../../../../lib/components";
 import moment from "moment";
@@ -55,9 +58,6 @@ const beforeUpload = (file: any) => {
 interface Props {
   user: UserType;
 }
-interface IValidateMess {
-  [key: string]: string[];
-}
 
 interface IProfileData {
   user: UpdatingUserVariables;
@@ -68,25 +68,32 @@ export const UpdateProfile = ({ user }: Props) => {
   const [imageUrl, setImageUrl] = useState(undefined);
   const [isShowBackendError, setIsShowBackendError] = useState(false);
   const [backendErrors, setBackendErrors] = useState<IValidateMess>({});
-  // const [userFields, setUserFields] = useState<UserUpdateReturnType>({
-  //   updateUser: {
-  //     data: null,
-  //     errors: null,
-  //   },
-  // });
+  const [userFields, setUserFields] = useState<UserUpdateReturnType>({
+    updateUser: {
+      __typename: "UserUpdateGQLReturnType",
+      data: null,
+      errors: null,
+    },
+  });
   //console.log(user);
 
   const [updateUser, { loading: updateUserLoading, error: updateUserError }] =
     useMutation<UserUpdateReturnType, UpdatingUserVariables>(UPDATING_USER, {
       onCompleted: (data) => {
-        console.log(data);
+        //console.log(data);
         if (!data.updateUser?.errors) {
           setBackendErrors({});
-          displaySuccessNotification("Profile has successfully updated!");
+          setUserFields(data);
+          displaySuccessNotification(
+            "Your profile has been successfully updated!"
+          );
         } else {
-          setBackendErrors(showErrorsBackend(data.updateUser.errors));
+          setBackendErrors(
+            //format validation errors from backend
+            showErrorsBackend<IValidateMess, YupError[]>(data.updateUser.errors)
+          );
           displayErrorNotification(
-            "The fields are invalid, please check again!"
+            "Some fields are invalid, please check again!"
           );
         }
       },
@@ -119,31 +126,86 @@ export const UpdateProfile = ({ user }: Props) => {
     </div>
   );
   const handleOnUpdate = async (data: IProfileData) => {
-    //const { user } = data;
+    const birthday = data.user.birthday;
+
+    data.user.birthday =
+      birthday &&
+      birthday.valueOf() === moment("01/01/1940", dateFormatList[0]).valueOf()
+        ? null
+        : birthday.valueOf();
+
+    const userBirthday =
+      user.birthday &&
+      moment(new Date(user.birthday), dateFormatList[0]).valueOf();
+    //console.log(birthday.valueOf());
+    //console.log(moment(new Date(user.birthday), dateFormatList[0]).valueOf());
+
     data.user._id = user.id;
-    console.log(data);
 
-    await updateUser({
-      variables: data.user,
-      // {
-      //   _id: "102692709858534677713",
-      //   first_name: "",
-      //   last_name: "lee",
-      //   phone: "23235df235",
-      //   birthday: data.user.birthday,
-      //   address: "9969 erma",
-      // },
-    });
-  };
+    //check if there is some changes for updating
+    const testChange: IProfileData["user"] = {
+      _id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      address: user.address,
+      bio: user.bio,
+      phone: user.phone,
+      birthday: userBirthday,
+      gender: user.gender,
+    };
 
-  const initialValues = {
-    user: {
-      ...user,
-      birthday: user.birthday
-        ? moment(new Date(user.birthday), dateFormatList[0])
-        : moment("01/01/1940", dateFormatList[0]),
-    },
+    // convert all empty characters to null for comparison
+    for (const [key, val] of Object.entries(data.user)) {
+      if (val === "") {
+        data.user[key as keyof IProfileData["user"]] = null;
+      }
+    }
+
+    // compare update inputs if it changed, can update
+    if (!haveSameObjects<IProfileData["user"]>(testChange, data.user)) {
+      data.user.birthday = birthday;
+      //console.log(data.user);
+
+      await updateUser({
+        variables: data.user,
+        // {
+        //   _id: "102692709858534677713",
+        //   first_name: "",
+        //   last_name: "lee",
+        //   phone: "23235df235",
+        //   birthday: data.user.birthday,
+        //   address: "9969 erma",
+        // },
+      });
+      console.log("[handleOnUpdate] after updated profile: ", userFields);
+    } else {
+      displayErrorNotification(
+        "There is no change in the field!",
+        "Update Cancelled!"
+      );
+    }
   };
+  let initialValues;
+  const updatedUser = userFields.updateUser?.data;
+  if (updatedUser) {
+    initialValues = {
+      user: {
+        ...updatedUser,
+        birthday: user.birthday
+          ? moment(new Date(user.birthday), dateFormatList[0])
+          : moment("01/01/1940", dateFormatList[0]),
+      },
+    };
+  } else {
+    initialValues = {
+      user: {
+        ...user,
+        birthday: user.birthday
+          ? moment(new Date(user.birthday), dateFormatList[0])
+          : moment("01/01/1940", dateFormatList[0]),
+      },
+    };
+  }
 
   const generateErrors = (errors: string[]): JSX.Element | null => {
     //console.log(errors);
@@ -161,27 +223,23 @@ export const UpdateProfile = ({ user }: Props) => {
     );
   };
 
-  const showErrorsBackend = (errors: YupError[] | null): IValidateMess => {
-    //console.log(errors);
-
-    const mess: IValidateMess = {};
-
-    errors &&
-      errors.forEach((item) => {
-        if (mess[item.path]) {
-          mess[item.path].push(item.message);
-        } else {
-          mess[item.path] = [item.message];
-        }
-      });
-    console.log(mess);
-
-    return mess;
-  };
-
   const updateErrorBanner = updateUserError ? (
     <ErrorBanner description="Sorry! We weren't able to update. Please try again later!" />
   ) : null;
+
+  const handleFieldsChange = (data: any) => {
+    //get key where the field changed
+    const key = Object.keys(data)[0];
+    //remove validation message
+    if (backendErrors[key]) {
+      delete backendErrors[key];
+      //console.log(backendErrors);
+      //set messages again
+      setBackendErrors({
+        ...backendErrors,
+      });
+    }
+  };
 
   return (
     <>
@@ -209,6 +267,7 @@ export const UpdateProfile = ({ user }: Props) => {
         name="user-update-profile"
         initialValues={initialValues}
         onFinish={handleOnUpdate}
+        onValuesChange={handleFieldsChange}
         //validateMessages={validateMessages}
       >
         <Form.Item
@@ -299,7 +358,14 @@ export const UpdateProfile = ({ user }: Props) => {
           <DatePicker format={dateFormatList} />
         </Form.Item>
 
-        <Form.Item name={["user", "gender"]} label="Gender">
+        <Form.Item
+          name={["user", "gender"]}
+          label="Gender"
+          {...validateStatus(
+            generateErrors(backendErrors["gender"]),
+            isShowBackendError
+          )}
+        >
           <Radio.Group>
             <Radio value={Gender.male}>Male</Radio>
             <Radio value={Gender.female}>Female</Radio>

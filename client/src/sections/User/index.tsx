@@ -39,6 +39,7 @@ type SettingType = {
 export const User = ({ selectedKeys, match }: Props) => {
   const { viewer } = useContext(AuthContext);
   //console.log(match.params.id);
+  //console.log("[User] viewer", viewer.id);
 
   const {
     data,
@@ -48,11 +49,14 @@ export const User = ({ selectedKeys, match }: Props) => {
     variables: {
       id: viewer.id ? viewer.id : "",
     },
+    onError: (error) => {
+      console.log(error);
+    },
   });
   const isUser = true;
   let accountSettingComp: SettingType = {};
   if (data) {
-    console.log(data);
+    //console.log(data);
 
     accountSettingComp = {
       "1": <UpdateProfile user={data.user} />,

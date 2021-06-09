@@ -6,3 +6,7 @@ export * from "./User";
 export * from "./User/__generated__/UpdatingUser";
 export * from "./RefreshToken";
 export * from "./RefreshToken/__generated__/RefreshToken";
+export * from "./Register";
+export * from "./Register/__generated__/RegisterUser";
+export * from "./SignInViaEmail";
+export * from "./SignInViaEmail/__generated__/SignInViaEmail";

@@ -12,6 +12,7 @@ import { SignInInput } from "./../../../globalTypes";
 export interface SignIn_signIn {
   __typename: "Viewer";
   id: string | null;
+  email: string | null;
   csrfToken: string | null;
   displayName: string | null;
   avatar: string | null;

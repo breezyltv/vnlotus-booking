@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import { ObjectId } from "mongodb";
 import * as yup from "yup";
 import {
   IResolvers,
@@ -6,17 +6,22 @@ import {
   AuthenticationError,
 } from "apollo-server-express";
 import { Database, Viewer, User, LoginProvider } from "../../../lib/types";
+import { formatYupError, logger } from "../../../lib/utils";
 import {
   authorizeRefreshToken,
-  formatYupError,
-  generateToken,
+  generateRandomExpToken,
   verifyToken,
-} from "../../../lib/utils";
+  hashPassword,
+  generateCSRTTokenWithExp,
+  generateBothTokens,
+  comparePassword,
+} from "../../../lib/auth";
+
 import { keys } from "../../../lib/config/keys";
 import { Google } from "../../../lib/api/Google";
-import { SignInArgs, RegisterArgs } from "./types";
+import { SignInArgs, RegisterArgs, SignInViaEmailArgs } from "./types";
 import { Response, Request } from "express";
-import { RegisterRules } from "../../../lib/validations/registerValid";
+import { RegisterRules, SignInViaEmailRules } from "../../../lib/validations/";
 import jwt from "jsonwebtoken";
 const cookieOpts = {
   httpOnly: true,
@@ -25,14 +30,28 @@ const cookieOpts = {
   secure: process.env.NODE_ENV === "development" ? false : true,
 };
 
+const createViewer = (user: User): Viewer => {
+  return {
+    _id: user._id.toHexString(),
+    email: user.email,
+    csrfToken: user.csrfToken,
+    displayName: user.displayName,
+    avatar: user.avatar,
+    walletId: user.walletId,
+    provider: user.provider,
+    didRequest: true,
+  };
+};
+
 const signInViaGoogle = async (
   code: string,
   csrfToken: string,
+  rndExp: number,
   db: Database,
   res: Response
 ): Promise<User | undefined> => {
   const { user } = await Google.signIn(code);
-  console.log(user);
+  logger("[signInViaGoogle] get google user... PASSED!");
 
   if (!user) {
     throw new Error("Google sign in error");
@@ -65,7 +84,7 @@ const signInViaGoogle = async (
   }
 
   //generate both access token and refresh token
-  console.log("generated accessToken and refreshToken...");
+  logger("generated accessToken and refreshToken...");
   const viewerData = {
     _id: userId,
     first_name: firstName,
@@ -74,31 +93,29 @@ const signInViaGoogle = async (
     csrfToken,
     provider: LoginProvider.GOOGLE,
   };
-  const accessToken = await generateToken(
+  const { accessToken, refreshToken } = await generateBothTokens(
     viewerData,
-    process.env.SECRET || keys.secretKey,
-    process.env.TOKEN_LIFE || keys.tokenLife
-  );
-  const refreshToken = await generateToken(
-    viewerData,
-    process.env.SECRET_REFRESH_TOKEN || keys.secretRefreshToken,
-    process.env.REFRESH_TOKEN_LIFE || keys.refreshTokenLife
+    rndExp
   );
 
   if (!accessToken || !refreshToken) {
     throw new Error("Could not generate token!");
   }
-  //check if user already exists
+  //check if google account already exists
   const updateRes = await db.users.findOneAndUpdate(
-    { _id: userId },
+    { "google._id": userId },
     {
       $set: {
         displayName: userName,
         avatar: userAvatar,
-        email: userEmail,
         accessToken,
         refreshToken,
         csrfToken,
+        google: {
+          _id: userId,
+          email: userEmail,
+          displayName: userName,
+        },
       },
     },
     { returnOriginal: false }
@@ -106,7 +123,6 @@ const signInViaGoogle = async (
   let viewer = updateRes.value;
   if (!viewer) {
     const insertResult = await db.users.insertOne({
-      _id: userId,
       accessToken,
       refreshToken,
       csrfToken,
@@ -119,6 +135,11 @@ const signInViaGoogle = async (
       income: 0,
       bookings: [],
       rooms: [],
+      google: {
+        _id: userId,
+        email: userEmail,
+        displayName: userName,
+      },
     });
     viewer = insertResult.ops[0];
   }
@@ -126,11 +147,11 @@ const signInViaGoogle = async (
   //set access tokens to cookie
   res.cookie("accessToken", accessToken, {
     ...cookieOpts,
-    maxAge: 365 * 24 * 60 * 60 * 1000,
+    maxAge: 60 * 60 * 1000, // 1 hour
   });
   res.cookie("refreshToken", refreshToken, {
     ...cookieOpts,
-    maxAge: 365 * 24 * 60 * 60 * 1000,
+    maxAge: 365 * 24 * 60 * 60 * 1000, //1 year
   });
 
   return viewer;
@@ -144,9 +165,9 @@ const signInViaCookie = async (
 ): Promise<User | null> => {
   try {
     const accessToken = req.signedCookies.accessToken;
-    //console.log("login via cookie", accessToken);
-    //const tokenInHeaders =  req.get("X-CSRF-TOKEN");
-    if (!accessToken) {
+    //logger("login via cookie", accessToken);
+    const csrfToken = req.get("X-CSRF-TOKEN");
+    if (!accessToken || !csrfToken) {
       return null;
     }
 
@@ -155,17 +176,32 @@ const signInViaCookie = async (
       process.env.SECRET || keys.secretKey
     );
 
-    //console.log("decode and check access token is expired", decodedToken);
+    if (decodedToken.data.csrfToken !== csrfToken) {
+      res.clearCookie("accessToken", cookieOpts);
+      res.clearCookie("refreshToken", cookieOpts);
+      delete req.headers["X-CSRF-TOKEN"];
+      logger("[signInViaCookie] both csrfToken are different... FAILED!");
+      logger(decodedToken.data.csrfToken);
+      logger(csrfToken);
+      throw new AuthenticationError("User authentication failed!");
+    }
+
+    //logger("decode and check access token is expired", decodedToken);
     if (!decodedToken) {
       return null;
     }
 
-    //check if access token is the same in cookie, don't need update new access token
-    //if(accessToken !== tokenInHeaders){
+    // const updateRes = await db.users.findOneAndUpdate(
+    //   { _id: new ObjectId(decodedToken.data._id) },
+    //   { $set: { csrfToken } },
+    //   { returnOriginal: false }
+    // );
+    // const viewer = updateRes.value;
 
-    let viewer = await db.users.findOne({ _id: decodedToken.data._id });
+    const viewer = await db.users.findOne({
+      _id: new ObjectId(decodedToken.data._id),
+    });
 
-    //const viewer = updateResult.value;
     if (!viewer) {
       res.clearCookie("accessToken", cookieOpts);
       res.clearCookie("refreshToken", cookieOpts);
@@ -175,7 +211,7 @@ const signInViaCookie = async (
     return viewer;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      console.log("accessToken is expired!");
+      logger("[signInViaCookie] accessToken is expired!");
       throw new AuthenticationError("Token has been expired!");
     }
     throw new Error("Failed to sign in via cookie!");
@@ -196,21 +232,95 @@ export const viewerResolvers: IResolvers = {
     register: async (
       _root: undefined,
       { user }: RegisterArgs,
-      { db, req, res }: { db: Database; req: Request; res: Response }
+      { db, res }: { db: Database; res: Response }
     ) => {
-      console.log(user);
+      logger(user);
       try {
         //validate inputs with Yup
         await RegisterRules.validate(user, { abortEarly: false });
+
+        const isEmailExists = await db.users.findOne({ email: user.email });
+
+        if (isEmailExists) {
+          throw new Error("Email is already registered!");
+        }
+        const rndExp = generateRandomExpToken(
+          process.env.TOKEN_LIFE || keys.tokenLife
+        );
+        if (!rndExp) {
+          logger(
+            "[register] Could not generate random expired token date... FAILED!"
+          );
+          throw new Error("Uhh! Something went wrong, please login again!");
+        }
+        //hashing password
+        const hashedPassword = await hashPassword(user.password);
+
+        //create access, refresh and CSRF token
+        const csrfToken = await generateCSRTTokenWithExp(24, rndExp);
+        if (!csrfToken) {
+          logger("[register] Could not generate csrfToken... FAILED!");
+          throw new Error("Could not generate csrfToken!");
+        }
+        const newUserId = new ObjectId();
+        //create access and refresh token
+        const viewerData = {
+          _id: newUserId.toHexString(),
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          csrfToken,
+          provider: LoginProvider.EMAIL,
+        };
+
+        const { accessToken, refreshToken } = await generateBothTokens(
+          viewerData,
+          rndExp
+        );
+
+        //insert new user
+        const newUserRes = await db.users.insertOne({
+          _id: newUserId,
+          email: user.email,
+          accessToken,
+          refreshToken,
+          csrfToken,
+          displayName: user.first_name + " " + user.last_name,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          password: hashedPassword,
+          provider: LoginProvider.EMAIL,
+          income: 0,
+          bookings: [],
+          rooms: [],
+        });
+
+        if (!newUserRes) {
+          throw new Error("Sorry! Something went wrong. Could not register!");
+        }
+        //set access tokens to cookie
+        //set access tokens to cookie
+        res.cookie("accessToken", accessToken, {
+          ...cookieOpts,
+          maxAge: 60 * 60 * 1000, // 1 hour
+        });
+        res.cookie("refreshToken", refreshToken, {
+          ...cookieOpts,
+          maxAge: 365 * 24 * 60 * 60 * 1000, //1 year
+        });
+
+        const viewer = newUserRes.ops[0];
+
+        return { data: createViewer(viewer), errors: null };
       } catch (error) {
         if (error instanceof yup.ValidationError) {
-          console.log("yup errors", formatYupError(error));
+          logger("[register] yup errors", formatYupError(error));
           return {
-            data: null,
+            data: { didRequest: true },
             errors: formatYupError(error),
           };
         } else {
-          console.log("Apollo graphql errors");
+          logger("[register] error!");
           throw error;
         }
       }
@@ -224,32 +334,136 @@ export const viewerResolvers: IResolvers = {
         //check Google auth0 code
         const code = input ? input.code : null;
         //create csrfToken every time sign in
-        const csrfToken = crypto.randomBytes(16).toString("hex");
-
+        const rndExp = generateRandomExpToken(
+          process.env.TOKEN_LIFE || keys.tokenLife
+        );
+        if (!rndExp) {
+          logger(
+            "[signIn] Could not generate random expired token date... FAILED!"
+          );
+          throw new Error("Uhh! Something went wrong, please login again!");
+        }
+        const csrfToken = await generateCSRTTokenWithExp(24, rndExp);
+        if (!csrfToken) {
+          logger("[signIn] Could not generate csrfToken... FAILED!");
+          throw new Error("Could not generate csrfToken!");
+        }
         const viewer = code
-          ? await signInViaGoogle(code, csrfToken, db, res)
+          ? await signInViaGoogle(code, csrfToken, rndExp, db, res)
           : await signInViaCookie(db, csrfToken, req, res);
         if (!viewer) {
           return { didRequest: true };
         }
-        return {
-          _id: viewer._id,
-          csrfToken: viewer.csrfToken,
-          displayName: viewer.displayName,
-          avatar: viewer.avatar,
-          walletId: viewer.walletId,
-          provider: viewer.provider,
-          didRequest: true,
-        };
+        const viewerRes = createViewer(viewer);
+
+        logger("[signIn] generating viewer...");
+        return viewerRes;
       } catch (error) {
-        //Handle AuthenticationError return from signInViaCookie method
-        if (
-          error instanceof AuthenticationError ||
-          error instanceof ForbiddenError
-        ) {
+        logger(`Failed to sign in: ${error}`);
+
+        throw error;
+      }
+    },
+    signInViaEmail: async (
+      _root: undefined,
+      { email, password }: SignInViaEmailArgs,
+      { db, res }: { db: Database; res: Response }
+    ) => {
+      try {
+        logger("[signInViaEmail]", email, password);
+        //validate inputs with Yup
+        await SignInViaEmailRules.validate(
+          { email, password },
+          { abortEarly: false }
+        );
+
+        const user = await db.users.findOne({ email });
+        if (!user) {
+          throw new Error("Login failed: Invalid username or password!");
+        }
+        if (!user.password) {
+          throw new Error("Email is already registered!");
+        }
+        const isValidPassword = await comparePassword(password, user.password);
+
+        if (!isValidPassword) {
+          throw new Error("Login failed: Invalid username or password!");
+        }
+
+        logger("[signInViaEmail] check password... PASSED!");
+
+        const rndExp = generateRandomExpToken(
+          process.env.TOKEN_LIFE || keys.tokenLife
+        );
+
+        if (!rndExp) {
+          logger(
+            "[signInViaEmail] Could not generate random expired token date... FAILED!"
+          );
+          throw new Error("Uhh! Something went wrong, please login again!");
+        }
+        const csrfToken = await generateCSRTTokenWithExp(24, rndExp);
+        if (!csrfToken) {
+          logger("[signInViaEmail] Could not generate csrfToken... FAILED!");
+          throw new Error("Could not generate csrfToken!");
+        }
+        const viewerData = {
+          _id: user._id.toHexString(),
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          csrfToken,
+          provider: LoginProvider.EMAIL,
+        };
+
+        const { accessToken, refreshToken } = await generateBothTokens(
+          viewerData,
+          rndExp
+        );
+
+        logger("[signInViaEmail] generate 3 tokens... PASSED!");
+
+        const viewerRes = await db.users.findOneAndUpdate(
+          { email },
+          {
+            $set: {
+              accessToken,
+              refreshToken,
+              csrfToken,
+            },
+          },
+          { returnOriginal: false }
+        );
+
+        if (!viewerRes.value) {
+          throw new Error("Could not sign you in!");
+        }
+
+        res.cookie("accessToken", accessToken, {
+          ...cookieOpts,
+          maxAge: 60 * 60 * 1000, // 1 hour
+        });
+        res.cookie("refreshToken", refreshToken, {
+          ...cookieOpts,
+          maxAge: 365 * 24 * 60 * 60 * 1000, //1 year
+        });
+
+        const viewer = createViewer(viewerRes.value);
+
+        logger("[signInViaEmail] generating viewer...", viewer);
+
+        return { data: viewer, errors: null };
+      } catch (error) {
+        if (error instanceof yup.ValidationError) {
+          logger("[signInViaEmail] yup errors", formatYupError(error));
+          return {
+            data: { didRequest: true },
+            errors: formatYupError(error),
+          };
+        } else {
+          logger("[signInViaEmail] error!");
           throw error;
         }
-        throw new Error(`Failed to sign in: ${error}`);
       }
     },
     signOut: (
@@ -260,7 +474,9 @@ export const viewerResolvers: IResolvers = {
       try {
         res.clearCookie("accessToken", cookieOpts);
         res.clearCookie("refreshToken", cookieOpts);
-        console.log("try to log out... PASSED!");
+
+        logger("[signOut]logging out... PASSED!");
+
         return { didRequest: true };
       } catch (error) {
         throw new Error(`Failed to sign out: ${error}`);
@@ -273,94 +489,127 @@ export const viewerResolvers: IResolvers = {
       { db, req, res }: { db: Database; req: Request; res: Response }
     ): Promise<string | null> => {
       try {
-        const refreshToken = req.signedCookies.refreshToken;
-
+        const currRefreshToken = req.signedCookies.refreshToken;
+        //const currAccessToken = req.signedCookies.accessToken;
         const csrfToken = req.get("X-CSRF-TOKEN");
-        //console.log("[refreshToken] try to refresh token ", refreshToken);
-        //console.log("[refreshToken] try to csrfToken ", csrfToken);
-        if (!refreshToken || !csrfToken) {
-          console.log(
+        //logger("[refreshToken] try to refresh token ", refreshToken);
+        //logger("[refreshToken] try to csrfToken ", csrfToken);
+        if (!currRefreshToken || !csrfToken) {
+          logger(
             "[refreshToken] try to refresh token and csrfToken... FAILED!"
           );
           throw new ForbiddenError("Access denied, token missing!");
         }
-        console.log(
-          "[refreshToken] try to refresh token and csrfToken... PASSED!"
-        );
+        logger("[refreshToken] try to refresh token and csrfToken... PASSED!");
+
+        // if (decodedAccessToken.exp >= new Date().getTime() / 1000) {
+        //   logger("[refreshToken] access token is still alive... PASSED!");
+        //   return null;
+        // }
         //decode if refresh token is valid
         const decodedToken = await verifyToken(
-          refreshToken,
+          currRefreshToken,
           process.env.SECRET_REFRESH_TOKEN || keys.secretRefreshToken
         );
-
-        if (decodedToken.data.csrfToken !== csrfToken) {
-          throw new ForbiddenError("Access denied, token missing!");
-        }
-        console.log(
-          "[refreshToken] checking csrfToken in headers and in access token... PASSED!"
+        logger(
+          "[refreshToken] checking csrfToken in headers and access token... PASSED!"
         );
+        if (decodedToken.data.csrfToken !== csrfToken) {
+          res.clearCookie("accessToken", cookieOpts);
+          res.clearCookie("refreshToken", cookieOpts);
+          delete req.headers["X-CSRF-TOKEN"];
+          logger("[refreshToken] both csrfToken are different... FAILED!");
+          logger(decodedToken.data.csrfToken);
+          logger(csrfToken);
+          throw new AuthenticationError("User is not authenticated!");
+        }
 
-        //console.log("decode refresh token!", decodedToken);
+        //logger("decode refresh token!", decodedToken);
         //check if refresh token  is in database via user id in token
         const viewer = await authorizeRefreshToken(
           db,
-          decodedToken.data._id,
-          refreshToken
+          decodedToken.data.email,
+          currRefreshToken
         );
         if (!viewer) {
           res.clearCookie("accessToken", cookieOpts);
           res.clearCookie("refreshToken", cookieOpts);
+          delete req.headers["X-CSRF-TOKEN"];
           throw new AuthenticationError(
             "Token is expired, please login again!"
           );
         }
 
-        console.log("[refreshToken] generating new csrf and access token...!");
+        logger("[refreshToken] generating new csrf and access token...!");
 
-        //generate new csrfToken
-        const newCSRFToken = crypto.randomBytes(16).toString("hex");
-
-        //generate new access token here
-        const accessToken = await generateToken(
-          {
-            _id: viewer._id,
-            first_name: viewer.first_name,
-            last_name: viewer.last_name,
-            email: viewer.email,
-            csrfToken: newCSRFToken,
-            provider: viewer.provider,
-          },
-          process.env.SECRET || keys.secretKey,
+        const rndExp = generateRandomExpToken(
           process.env.TOKEN_LIFE || keys.tokenLife
         );
+
+        if (!rndExp) {
+          logger(
+            "[refreshToken] Could not generate random expired token date... FAILED!"
+          );
+          throw new Error("Uhh! Something went wrong, please login again!");
+        }
+
+        //generate new csrfToken
+        const newCSRFToken = await generateCSRTTokenWithExp(24, rndExp);
+        if (!newCSRFToken) {
+          logger("[refreshToken] Could not generate csrfToken... FAILED!");
+          throw new Error("Could not generate csrfToken!");
+        }
+        //generate new access token here
+        const viewerData = {
+          _id: viewer._id.toHexString(),
+          first_name: viewer.first_name,
+          last_name: viewer.last_name,
+          email: viewer.email,
+          csrfToken: newCSRFToken,
+          provider: viewer.provider,
+        };
+
+        const { accessToken, refreshToken } = await generateBothTokens(
+          viewerData,
+          rndExp
+        );
+
         if (!accessToken) {
+          res.clearCookie("accessToken", cookieOpts);
+          delete req.headers["X-CSRF-TOKEN"];
           throw new Error("Failed to generate an access token!");
         }
 
         //set new token to cookie
         res.cookie("accessToken", accessToken, {
           ...cookieOpts,
-          maxAge: 365 * 24 * 60 * 60 * 1000,
+          maxAge: 60 * 60 * 1000,
+        });
+        res.cookie("refreshToken", refreshToken, {
+          ...cookieOpts,
+          maxAge: 365 * 24 * 60 * 60 * 1000, //1 year
         });
         //update new token and csrfToken
-        let updateResult = await db.users.findOneAndUpdate(
-          { _id: decodedToken.data._id },
+        const updateResult = await db.users.findOneAndUpdate(
+          { email: decodedToken.data.email },
           {
             $set: {
               accessToken,
-              csrfToken,
+              refreshToken,
+              csrfToken: newCSRFToken,
             },
           },
           { returnOriginal: false }
         );
         if (!updateResult.value) {
           res.clearCookie("accessToken", cookieOpts);
+          delete req.headers["X-CSRF-TOKEN"];
           throw new Error("Could not generate new token!");
         }
-        console.log(
+        logger(
           "[refreshToken] new access token has been created and set in cookies! PASSED"
         );
-        return csrfToken;
+        return newCSRFToken;
       } catch (error) {
         throw error;
       }

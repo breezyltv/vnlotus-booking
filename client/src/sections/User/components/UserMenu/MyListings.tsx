@@ -29,7 +29,6 @@ export const MyListings = () => {
       limit: PAGE_LIMIT,
     },
   });
-  console.log(data);
 
   const generateLoadingListingCard = (): JSX.Element[] => {
     let listing: JSX.Element[] = [];
@@ -55,10 +54,6 @@ export const MyListings = () => {
         xxl: 4,
       }}
       dataSource={data?.user.rooms.result}
-      locale={{
-        emptyText:
-          "No matching results found or user does not have any listings yet!",
-      }}
       pagination={{
         position: "bottom",
         current: listingsPage,

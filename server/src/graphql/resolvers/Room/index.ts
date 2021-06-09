@@ -2,7 +2,7 @@ import { IResolvers } from "apollo-server-express";
 import { Request } from "express";
 import { ObjectId } from "bson";
 import { Database, Room, User } from "../../../lib/types";
-import { authorize } from "../../../lib/utils";
+import { authorizeAccessToken } from "../../../lib/auth";
 import {
   RoomArgs,
   RoomBookingArgs,
@@ -25,8 +25,8 @@ export const roomResolvers: IResolvers = {
           throw new Error("No room be found!");
         }
         // check if request is authorized
-        const viewer = await authorize(db, req);
-        if (viewer && viewer._id === room.host) {
+        const viewer = await authorizeAccessToken(db, req);
+        if (viewer && viewer._id.toHexString() === room.host) {
           room.authorized = true;
         }
         return room;
@@ -61,7 +61,7 @@ export const roomResolvers: IResolvers = {
       { db }: { db: Database }
     ): Promise<User> => {
       try {
-        const host = await db.users.findOne({ _id: room.host });
+        const host = await db.users.findOne({ _id: new ObjectId(room.host) });
         if (!host) {
           throw new Error("Host could not be found!");
         }

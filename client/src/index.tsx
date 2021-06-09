@@ -31,9 +31,12 @@ import {
   Profile,
   Footer,
   MyListings,
+  MyBookings,
+  Wishlist,
 } from "./sections";
 import { HeaderSkeleton, ErrorBanner } from "./lib/components";
 import { displayErrorNotification } from "./lib/utils";
+import base64url from "base64url";
 import {
   SIGN_IN,
   SignIn as SignInData,
@@ -94,8 +97,6 @@ const errorLink = onError(
                           "X-CSRF-TOKEN": data.refreshToken || "",
                         },
                       });
-                    } else {
-                      sessionStorage.removeItem("csrfToken");
                     }
                     return true;
                   })
@@ -132,6 +133,10 @@ const errorLink = onError(
     }
     if (networkError) {
       console.log(`[Network error]: ${networkError}`);
+      displayErrorNotification(
+        "Code 400",
+        "We weren't able to connect the server. Please try again later!"
+      );
     }
   }
 );
@@ -150,12 +155,36 @@ const authLink = setContext(async () => {
   };
 });
 
+interface IExpCode {
+  exp: number;
+}
+
+const isTokenExpired = (): boolean => {
+  const csrfToken = sessionStorage.getItem("csrfToken");
+  if (!csrfToken) {
+    return false;
+  }
+  const currentDate = new Date();
+  const code = csrfToken.split(".");
+
+  if (code.length !== 2) {
+    return false;
+  }
+  const expCode: IExpCode = JSON.parse(base64url.decode(code[1]));
+  console.log(
+    "[isTokenExpired] Check Token before send the request to server...",
+    expCode,
+    currentDate.getTime()
+  );
+
+  return expCode.exp < currentDate.getTime() ? true : false;
+};
+
 // a middleware to handle expired token before send request
 const refreshTokenMiddleware: any = new TokenRefreshLink({
   //the refresh token field name which data returns from backend
   accessTokenField: "refreshToken",
-  isTokenValidOrUndefined: () =>
-    sessionStorage.getItem("csrfToken") ? false : true,
+  isTokenValidOrUndefined: () => !isTokenExpired(),
   fetchAccessToken: async () => {
     console.log("[refreshTokenMiddleware] getting new token...");
 
@@ -175,13 +204,19 @@ const refreshTokenMiddleware: any = new TokenRefreshLink({
     });
   },
   handleFetch: (csrfToken) => {
-    console.log(
-      "[refreshTokenMiddleware] got new csrfToken and set in sessionStorage!"
-    );
-    sessionStorage.setItem("csrfToken", csrfToken);
+    if (csrfToken) {
+      console.log(
+        "[refreshTokenMiddleware] got new csrfToken and set in sessionStorage!"
+      );
+      sessionStorage.setItem("csrfToken", csrfToken);
+    }
   },
   handleError: (err) => {
     //console.warn("Your refresh token is invalid. Try to relogin");
+    // displayErrorNotification(
+    //   "401 Unauthorized",
+    //   "Your refresh token is invalid. Try to relogin!"
+    // );
     console.error(err);
   },
 });
@@ -211,10 +246,8 @@ const App = () => {
         }
       },
 
-      onError: ({ graphQLErrors }) => {
-        if (graphQLErrors) {
-          console.log(graphQLErrors);
-        }
+      onError: (error) => {
+        console.log(error);
       },
     }
   );
@@ -310,6 +343,20 @@ const App = () => {
             isAuthenticated={isAuthenticated}
             authenticationPath={"/signin"}
             component={MyListings}
+          />
+          <PrivateRoute
+            exact
+            path="/user/bookings/:id"
+            isAuthenticated={isAuthenticated}
+            authenticationPath={"/signin"}
+            component={MyBookings}
+          />
+          <PrivateRoute
+            exact
+            path="/user/wishlist/:id"
+            isAuthenticated={isAuthenticated}
+            authenticationPath={"/signin"}
+            component={Wishlist}
           />
           <Route
             exact

@@ -27,7 +27,7 @@ export const ResumeSkills = ({ profile }: Props) => {
             </ResumeSectionHeading>
             <ResumeSkillTitle>
               {profile.skills.frameworks &&
-                profile.skills.frameworks.map((item) => (
+                profile.skills.frameworks.map((item, idx) => (
                   <>
                     <Text>
                       {item.title}
@@ -38,6 +38,7 @@ export const ResumeSkills = ({ profile }: Props) => {
                       />
                     </Text>
                     <Progress
+                      key={idx}
                       percent={item.level ? item.level : 0}
                       showInfo={false}
                       trailColor={colorSchemes["second-main-color"]}
@@ -53,8 +54,8 @@ export const ResumeSkills = ({ profile }: Props) => {
             </Typography>
             <ResumeLangInfo>
               <Space wrap>
-                {profile?.skills?.languages?.map((item) => (
-                  <Title level={5}>
+                {profile?.skills?.languages?.map((item, idx) => (
+                  <Title level={5} key={idx}>
                     <DynamicIcon
                       iconName={item?.title}
                       size={18}

@@ -1,5 +1,5 @@
 import { message, notification } from "antd";
-
+import { IValidateMess } from "../types";
 export const displaySuccessNotification = (
   message: string,
   description?: string
@@ -293,4 +293,42 @@ export const validateStatus = (
     };
   }
   return status;
+};
+
+export const haveSameObjects = <T extends {}>(obj1: T, obj2: T) => {
+  // console.log(obj1);
+  // console.log(obj2);
+
+  const obj1Length = Object.keys(obj1).length;
+  const obj2Length = Object.keys(obj2).length;
+
+  if (obj1Length === obj2Length) {
+    return Object.keys(obj1).every(
+      (key) =>
+        obj2.hasOwnProperty(key) &&
+        obj2[key as keyof T] === obj1[key as keyof T]
+    );
+  }
+  return false;
+};
+
+export const showErrorsBackend = <
+  TData extends {},
+  Yup extends readonly any[] | null
+>(
+  errors: Yup | null
+) => {
+  const mess: IValidateMess = {};
+
+  errors &&
+    errors.forEach((item) => {
+      if (mess[item.path]) {
+        mess[item.path].push(item.message);
+      } else {
+        mess[item.path] = [item.message];
+      }
+    });
+  //console.log(mess);
+
+  return mess as TData;
 };

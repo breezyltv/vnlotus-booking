@@ -87,7 +87,7 @@ export const typeDefs = gql`
     displayName: String!
     first_name: String!
     last_name: String!
-    avatar: String!
+    avatar: String
     email: String!
     phone: String
     address: String
@@ -151,6 +151,7 @@ export const typeDefs = gql`
   type Viewer {
     id: ID
     csrfToken: String
+    email: String
     displayName: String
     avatar: String
     hasWallet: Boolean
@@ -182,16 +183,19 @@ export const typeDefs = gql`
   }
 
   input RegisterUserInput {
-    email: String!
-    first_name: String!
-    last_name: String!
-    password: String!
-    confirm_password: String!
-    login_type: LoginType!
+    email: String
+    first_name: String
+    last_name: String
+    password: String
+    confirm_password: String
   }
 
   type RegisterGQLType {
-    data: Viewer
+    data: Viewer!
+    errors: [YupError!]
+  }
+  type SignInViaEmailGQLType {
+    data: Viewer!
     errors: [YupError!]
   }
 
@@ -212,6 +216,7 @@ export const typeDefs = gql`
   type Mutation {
     register(user: RegisterUserInput): RegisterGQLType!
     signIn(input: SignInInput): Viewer!
+    signInViaEmail(email: String, password: String): SignInViaEmailGQLType
     signOut: Viewer!
     deleteListing(id: ID!): Listing!
     updateUser(user: UserUpdateInput!): UserUpdateGQLReturnType

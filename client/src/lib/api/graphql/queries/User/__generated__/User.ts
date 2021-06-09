@@ -12,7 +12,7 @@ import { LoginType, Gender } from "./../../../globalTypes";
 export interface User_user {
   __typename: "User";
   id: string;
-  avatar: string;
+  avatar: string | null;
   displayName: string;
   first_name: string;
   last_name: string;
