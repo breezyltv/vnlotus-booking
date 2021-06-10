@@ -11,6 +11,7 @@ import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { ReactComponent as GoogleSVG } from "../../Common/assets/google-svg.svg";
 import { IValidateMess } from "../../../lib/types";
 import { validateStatus } from "../../../lib/utils";
+import { backendErrorMessages } from "../../../lib/components";
 const { Title, Text } = Typography;
 interface Props {
   handleAuthorizeViaGoogle: () => void;
@@ -20,22 +21,6 @@ interface Props {
   backendErrors: IValidateMess;
   setBackendErrors: React.Dispatch<React.SetStateAction<IValidateMess>>;
 }
-
-const generateErrors = (errors: string[]): JSX.Element | null => {
-  //console.log(errors);
-  if (!errors || errors === undefined) return null;
-  return (
-    <>
-      {errors &&
-        errors.map((error, idx) => (
-          <>
-            <span key={idx}>{error}</span>
-            <br />
-          </>
-        ))}
-    </>
-  );
-};
 
 export const LoginForm = ({
   handleAuthorizeViaGoogle,
@@ -85,7 +70,7 @@ export const LoginForm = ({
           required
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["email"]),
+            backendErrorMessages(backendErrors["email"]),
             isShowBackendError
           )}
         >
@@ -97,12 +82,18 @@ export const LoginForm = ({
           rules={
             isShowBackendError
               ? []
-              : [{ required: true, message: "Please input your password!" }]
+              : [
+                  { required: true, message: "Please input your password!" },
+                  {
+                    min: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                ]
           }
           required
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["password"]),
+            backendErrorMessages(backendErrors["password"]),
             isShowBackendError
           )}
         >

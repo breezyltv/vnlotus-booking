@@ -9,6 +9,12 @@ import { LoginType, Gender } from "./../../../globalTypes";
 // GraphQL query operation: User
 // ====================================================
 
+export interface User_user_linkAccount {
+  __typename: "ILinkLocalAccount";
+  google: LoginType | null;
+  email: LoginType | null;
+}
+
 export interface User_user {
   __typename: "User";
   id: string;
@@ -18,6 +24,7 @@ export interface User_user {
   last_name: string;
   email: string;
   provider: LoginType;
+  linkAccount: User_user_linkAccount;
   phone: string | null;
   address: string | null;
   birthday: any | null;

@@ -10,3 +10,5 @@ export * from "./Register";
 export * from "./Register/__generated__/RegisterUser";
 export * from "./SignInViaEmail";
 export * from "./SignInViaEmail/__generated__/SignInViaEmail";
+export * from "./LinkLocalAccount";
+export * from "./LinkLocalAccount/__generated__/LinkLocalAccount";

@@ -19,6 +19,7 @@ export const REGISTER = gql`
     ) {
       data {
         id
+        email
         csrfToken
         displayName
         avatar

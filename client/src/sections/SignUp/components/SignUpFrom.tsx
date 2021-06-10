@@ -11,6 +11,7 @@ import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { ReactComponent as GoogleSVG } from "../../Common/assets/google-svg.svg";
 import { IValidateMess } from "../../../lib/types";
 import { validateStatus } from "../../../lib/utils";
+import { backendErrorMessages } from "../../../lib/components";
 const { Title, Text } = Typography;
 
 interface Props {
@@ -22,22 +23,6 @@ interface Props {
   backendErrors: IValidateMess;
   setBackendErrors: React.Dispatch<React.SetStateAction<IValidateMess>>;
 }
-
-const generateErrors = (errors: string[]): JSX.Element | null => {
-  //console.log(errors);
-  if (!errors || errors === undefined) return null;
-  return (
-    <>
-      {errors &&
-        errors.map((error, idx) => (
-          <>
-            <span key={idx}>{error}</span>
-            <br />
-          </>
-        ))}
-    </>
-  );
-};
 
 export const SignUpForm = ({
   handleSignUpViaGoogle,
@@ -52,7 +37,7 @@ export const SignUpForm = ({
 
   const handleFieldsChange = (data: any) => {
     //get key where the field changed
-    const key = Object.keys(data)[0];
+    const key = Object.keys(data.user)[0];
     //remove validation message
     if (backendErrors[key]) {
       delete backendErrors[key];
@@ -89,7 +74,7 @@ export const SignUpForm = ({
           required
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["email"]),
+            backendErrorMessages(backendErrors["email"]),
             isShowBackendError
           )}
         >
@@ -119,7 +104,7 @@ export const SignUpForm = ({
           required
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["first_name"]),
+            backendErrorMessages(backendErrors["first_name"]),
             isShowBackendError
           )}
         >
@@ -150,7 +135,7 @@ export const SignUpForm = ({
           required
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["last_name"]),
+            backendErrorMessages(backendErrors["last_name"]),
             isShowBackendError
           )}
         >
@@ -166,7 +151,7 @@ export const SignUpForm = ({
           required
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["password"]),
+            backendErrorMessages(backendErrors["password"]),
             isShowBackendError
           )}
         >
@@ -180,12 +165,25 @@ export const SignUpForm = ({
           rules={
             isShowBackendError
               ? []
-              : [{ required: true, message: "Please input your password!" }]
+              : [
+                  { required: true, message: "Please input your password!" },
+                  ({ getFieldValue }) => ({
+                    validator(rule, value) {
+                      if (!value || getFieldValue("password") === value) {
+                        return Promise.resolve();
+                      }
+
+                      return Promise.reject(
+                        "The two passwords that you entered do not match!"
+                      );
+                    },
+                  }),
+                ]
           }
           required
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["confirm_password"]),
+            backendErrorMessages(backendErrors["confirm_password"]),
             isShowBackendError
           )}
         >

@@ -1,20 +1,23 @@
 import { useState } from "react";
-import { Button, Typography, Space, Modal } from "antd";
-import { GoogleOutlined, AuditOutlined } from "@ant-design/icons";
+import { Button, Typography, Space } from "antd";
+import { AuditOutlined } from "@ant-design/icons";
 import { User_user as UserType } from "../../../../lib/api/graphql/queries/";
 import { LoginType } from "../../../../lib/api/graphql/globalTypes";
 import { UpdateLocalAccountModal } from "./UpdateLocalAccountModal";
+import { ReactComponent as GoogleSVG } from "../../../Common/assets/google-svg.svg";
 const { Title, Text } = Typography;
 interface Props {
   user: UserType;
 }
 export const LinkAccount = ({ user }: Props) => {
   const [visibleModal, setVisibleModal] = useState(false);
+  const [disableLinkButton, setDisableLinkButton] = useState(false);
 
   const modal = (
     <UpdateLocalAccountModal
       visibleModal={visibleModal}
       setVisibleModal={setVisibleModal}
+      setDisableLinkButton={setDisableLinkButton}
       user={user}
     />
   );
@@ -29,8 +32,17 @@ export const LinkAccount = ({ user }: Props) => {
           <Button
             type="default"
             size="large"
-            disabled={user.provider === LoginType.GOOGLE ? true : false}
-            icon={<GoogleOutlined />}
+            disabled={
+              user.linkAccount.google === LoginType.GOOGLE || disableLinkButton
+                ? true
+                : false
+            }
+            icon={
+              <span role="img" className="anticon">
+                <GoogleSVG />
+              </span>
+            }
+            danger
           >
             Connect to Google
           </Button>
@@ -41,7 +53,11 @@ export const LinkAccount = ({ user }: Props) => {
           <Button
             type="primary"
             size="large"
-            disabled={user.provider === LoginType.EMAIL ? true : false}
+            disabled={
+              user.linkAccount.email === LoginType.EMAIL || disableLinkButton
+                ? true
+                : false
+            }
             icon={<AuditOutlined />}
             onClick={() => setVisibleModal(true)}
           >

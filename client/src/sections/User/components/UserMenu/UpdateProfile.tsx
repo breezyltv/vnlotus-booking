@@ -30,7 +30,7 @@ import {
 } from "../../../../lib/utils";
 import { IValidateMess } from "../../../../lib/types";
 import { CustomButtonPrimary } from "../../../../styles";
-import { ErrorBanner } from "../../../../lib/components";
+import { ErrorBanner, backendErrorMessages } from "../../../../lib/components";
 import moment from "moment";
 
 const { Text } = Typography;
@@ -207,22 +207,6 @@ export const UpdateProfile = ({ user }: Props) => {
     };
   }
 
-  const generateErrors = (errors: string[]): JSX.Element | null => {
-    //console.log(errors);
-    if (!errors || errors === undefined) return null;
-    return (
-      <>
-        {errors &&
-          errors.map((error, idx) => (
-            <>
-              <span key={idx}>{error}</span>
-              <br />
-            </>
-          ))}
-      </>
-    );
-  };
-
   const updateErrorBanner = updateUserError ? (
     <ErrorBanner description="Sorry! We weren't able to update. Please try again later!" />
   ) : null;
@@ -294,7 +278,7 @@ export const UpdateProfile = ({ user }: Props) => {
           }
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["first_name"]),
+            backendErrorMessages(backendErrors["first_name"]),
             isShowBackendError
           )}
         >
@@ -324,7 +308,7 @@ export const UpdateProfile = ({ user }: Props) => {
           }
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["last_name"]),
+            backendErrorMessages(backendErrors["last_name"]),
             isShowBackendError
           )}
         >
@@ -348,7 +332,7 @@ export const UpdateProfile = ({ user }: Props) => {
           }
           hasFeedback
           {...validateStatus(
-            generateErrors(backendErrors["phone"]),
+            backendErrorMessages(backendErrors["phone"]),
             isShowBackendError
           )}
         >
@@ -362,7 +346,7 @@ export const UpdateProfile = ({ user }: Props) => {
           name={["user", "gender"]}
           label="Gender"
           {...validateStatus(
-            generateErrors(backendErrors["gender"]),
+            backendErrorMessages(backendErrors["gender"]),
             isShowBackendError
           )}
         >

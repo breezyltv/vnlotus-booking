@@ -43,7 +43,7 @@ export const SignIn = ({ viewer, setViewer }: Props) => {
     { data: signInData, loading: signInLoading, error: signInError },
   ] = useMutation<SignInData, SignInVariables>(SIGN_IN, {
     onCompleted: (data) => {
-      console.log("after logged in: ", data);
+      //console.log("after logged in: ", data);
 
       if (data && data.signIn && data.signIn.csrfToken) {
         setViewer(data.signIn);
