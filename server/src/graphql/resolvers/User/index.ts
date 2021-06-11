@@ -1,9 +1,9 @@
-import { IResolvers } from "apollo-server-express";
+import { AuthenticationError, IResolvers } from "apollo-server-express";
 import { ObjectId } from "mongodb";
 import * as yup from "yup";
-import { Database, User } from "../../../lib/types";
-import { formatYupError } from "../../../lib/utils";
-import { authorizeAccessToken } from "../../../lib/auth";
+import { Database, LoginProvider, User } from "../../../lib/types";
+import { formatYupError, logger } from "../../../lib/utils";
+import { authorizeAccessToken, hashPassword } from "../../../lib/auth";
 import {
   UserArgs,
   UserUpdateArgs,
@@ -12,9 +12,14 @@ import {
   UserBookingsData,
   UserRoomsArgs,
   UserRoomsData,
+  LinkLocalAccountArgs,
+  ILinkLocalAccount,
 } from "./types";
 import { Request } from "express";
-import { UserUpdateRules } from "../../../lib/validations/userValid";
+import {
+  UserUpdateRules,
+  LinkLocalAccountRules,
+} from "../../../lib/validations/";
 
 export const userResolvers: IResolvers = {
   Query: {
@@ -39,11 +44,11 @@ export const userResolvers: IResolvers = {
         if (viewer && viewer._id === user._id) {
           user.authorized = true;
         }
-        //console.log("[User] viewer", viewer);
-        //console.log("[User] UserInputs", user);
+        //logger("[User] viewer", viewer);
+        //logger("[User] UserInputs", user);
         return user;
       } catch (error) {
-        console.log("[User] Failed to query user!");
+        logger("[User] Failed to query user!", error);
         throw error;
       }
     },
@@ -54,7 +59,7 @@ export const userResolvers: IResolvers = {
       { user }: UserUpdateArgs,
       { db, req }: { db: Database; req: Request }
     ): Promise<UserUpdateReturnType> => {
-      //console.log(user);
+      //logger(user);
       try {
         //check if birthday is different the default
         const birthday =
@@ -70,8 +75,8 @@ export const userResolvers: IResolvers = {
         }
         //validate inputs with Yup
         await UserUpdateRules.validate(user, { abortEarly: false });
-        //console.log("[updateUser] viewer", viewer);
-        //console.log("[updateUser] userUpdateInputs", user);
+        //logger("[updateUser] viewer", viewer);
+        //logger("[updateUser] userUpdateInputs", user);
         let updateUserData: any = {
           first_name: user.first_name?.trim(),
           last_name: user.last_name?.trim(),
@@ -98,7 +103,7 @@ export const userResolvers: IResolvers = {
         if (!updateResult.value) {
           throw new Error("Failed to update user profile");
         }
-        //console.log(updateResult.value);
+        //logger(updateResult.value);
 
         return {
           data: updateResult.value,
@@ -106,13 +111,75 @@ export const userResolvers: IResolvers = {
         };
       } catch (error) {
         if (error instanceof yup.ValidationError) {
-          console.log("yup errors", formatYupError(error));
+          logger("yup errors", formatYupError(error));
           return {
             data: null,
             errors: formatYupError(error),
           };
         } else {
-          console.log("[updateUser] errors");
+          logger("[updateUser] errors");
+          throw error;
+        }
+      }
+    },
+    linkLocalAccount: async (
+      _root: undefined,
+      { email, password, confirm_password }: LinkLocalAccountArgs,
+      { db, req }: { db: Database; req: Request }
+    ): Promise<ILinkLocalAccount> => {
+      try {
+        const viewer = await authorizeAccessToken(db, req);
+        if (!viewer) {
+          throw new AuthenticationError(`This request is not authorized!`);
+        }
+        //check if email is the same
+        if (email !== viewer.email) {
+          throw new AuthenticationError(`This request is not authorized!`);
+        }
+        if (viewer.provider !== LoginProvider.EMAIL) {
+          throw new Error(`You are currently signed in with a local account!`);
+        }
+
+        //validate with Yup
+        await LinkLocalAccountRules.validate(
+          { email, password, confirm_password },
+          { abortEarly: false }
+        );
+
+        //hash password
+        const encrypt = await hashPassword(password);
+
+        //update local account
+
+        const updateUser = await db.users.findOneAndUpdate(
+          { email },
+          {
+            $set: {
+              password: encrypt,
+              linkAccount: {
+                email: LoginProvider.EMAIL,
+              },
+            },
+          },
+          {
+            returnOriginal: true,
+          }
+        );
+
+        if (!updateUser.value) {
+          throw new Error("Could not link to local account!");
+        }
+
+        return { data: true, errors: null };
+      } catch (error) {
+        if (error instanceof yup.ValidationError) {
+          logger("yup errors", formatYupError(error));
+          return {
+            data: false,
+            errors: formatYupError(error),
+          };
+        } else {
+          logger("[updateUser] errors");
           throw error;
         }
       }

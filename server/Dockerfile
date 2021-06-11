@@ -7,6 +7,10 @@ WORKDIR /app
 
 COPY ["package.json","package-lock.json*","npm-shrinkwrap.json*", "./"]
 
+# argon2-ffi dependencie require python to work
+RUN apk add --update python3 make g++\
+    && rm -rf /var/cache/apk/*
+
 RUN npm install
 
 COPY . .

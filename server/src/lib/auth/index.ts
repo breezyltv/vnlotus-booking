@@ -7,6 +7,7 @@ import { logger } from "../utils/";
 import { Database, User, TokenUserData, ITokenUser } from "../types";
 import util from "util";
 import base64url from "base64url";
+import { ForbiddenError } from "apollo-server-errors";
 
 export const getRandomBytes = util.promisify(crypto.randomBytes);
 
@@ -64,6 +65,10 @@ export const authorizeAccessToken = async (
     "[authorizeAccessToken] get access token in cookie...",
     accessToken ? "PASSED" : "FAILED"
   );
+
+  if (!csrfToken || !accessToken) {
+    throw new ForbiddenError("Access denied, token missing!");
+  }
 
   if (accessToken && csrfToken) {
     const decodedToken = await verifyToken(

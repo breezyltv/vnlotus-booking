@@ -27,8 +27,18 @@ export interface UserRoomsData {
 export interface UserUpdateArgs {
   user: User;
 }
+export interface LinkLocalAccountArgs {
+  email: string;
+  password: string;
+  confirm_password: string;
+}
 
 export interface UserUpdateReturnType {
   data: User | null;
+  errors: YupError[] | null;
+}
+
+export interface ILinkLocalAccount {
+  data: boolean;
   errors: YupError[] | null;
 }

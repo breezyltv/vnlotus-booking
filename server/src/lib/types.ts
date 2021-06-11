@@ -87,12 +87,18 @@ export interface GoogleAccount {
   token?: string;
 }
 
+export interface IProvider {
+  google?: LoginProvider | null;
+  email?: LoginProvider | null;
+}
+
 export interface User {
   _id: ObjectId;
   accessToken: string;
   refreshToken: string;
   csrfToken: string;
   provider: LoginProvider;
+  linkAccount: IProvider;
   displayName?: string;
   first_name: string | null | undefined;
   last_name: string | null | undefined;

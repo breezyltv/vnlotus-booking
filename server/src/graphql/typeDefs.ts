@@ -81,9 +81,15 @@ export const typeDefs = gql`
     other
   }
 
+  type ILinkLocalAccount {
+    google: LoginType
+    email: LoginType
+  }
+
   type User {
     id: ID!
     provider: LoginType!
+    linkAccount: ILinkLocalAccount!
     displayName: String!
     first_name: String!
     last_name: String!
@@ -198,6 +204,10 @@ export const typeDefs = gql`
     data: Viewer!
     errors: [YupError!]
   }
+  type linkLocalAccountGQLType {
+    data: Boolean!
+    errors: [YupError!]
+  }
 
   type Query {
     authUrl: String!
@@ -221,5 +231,10 @@ export const typeDefs = gql`
     deleteListing(id: ID!): Listing!
     updateUser(user: UserUpdateInput!): UserUpdateGQLReturnType
     refreshToken: String!
+    linkLocalAccount(
+      email: String
+      password: String
+      confirm_password: String
+    ): linkLocalAccountGQLType
   }
 `;

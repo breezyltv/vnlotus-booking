@@ -11,9 +11,9 @@ import {
   authorizeRefreshToken,
   generateRandomExpToken,
   verifyToken,
-  hashPassword,
   generateCSRTTokenWithExp,
   generateBothTokens,
+  hashPassword,
   comparePassword,
 } from "../../../lib/auth";
 
@@ -50,8 +50,9 @@ const signInViaGoogle = async (
   db: Database,
   res: Response
 ): Promise<User | undefined> => {
-  const { user } = await Google.signIn(code);
-  logger("[signInViaGoogle] get google user... PASSED!");
+  const google = await Google.signIn(code);
+  const { user } = google;
+  logger("[signInViaGoogle] get google user... PASSED!", google);
 
   if (!user) {
     throw new Error("Google sign in error");
@@ -130,6 +131,9 @@ const signInViaGoogle = async (
       first_name: firstName,
       last_name: lastName,
       provider: LoginProvider.GOOGLE,
+      linkAccount: {
+        google: LoginProvider.GOOGLE,
+      },
       avatar: userAvatar,
       email: userEmail,
       income: 0,
@@ -214,6 +218,7 @@ const signInViaCookie = async (
       logger("[signInViaCookie] accessToken is expired!");
       throw new AuthenticationError("Token has been expired!");
     }
+    logger("[signInViaCookie] error!", error);
     throw new Error("Failed to sign in via cookie!");
   }
 };
@@ -290,6 +295,9 @@ export const viewerResolvers: IResolvers = {
           last_name: user.last_name,
           password: hashedPassword,
           provider: LoginProvider.EMAIL,
+          linkAccount: {
+            email: LoginProvider.EMAIL,
+          },
           income: 0,
           bookings: [],
           rooms: [],
