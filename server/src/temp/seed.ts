@@ -10,14 +10,17 @@ const seed = async () => {
 
     const users: User[] = [
       {
-        _id: "QhzwgJ9De9VOugJIo3z0gsPoVuV2",
-        token: "token_************",
+        _id: new ObjectId("QhzwgJ9De9VOugJIo3z0gsPoVuV2"),
+        accessToken: "token_************",
+        refreshToken: "token_************",
+        csrfToken: "token_************",
         first_name: "Vu",
         last_name: "Le",
         avatar:
           "https://lh3.googleusercontent.com/a-/AOh14Ghxa2eTURMkPvkLHGujR9Qasqzw379EEje5taCX7g=s96-c",
         email: "kevinlethevu@gmail.com",
-        provider: LoginProvider.Google,
+        provider: LoginProvider.GOOGLE,
+        linkAccount: {},
         walletId: "kevinlethevu@gmail.com",
         income: 69000,
         bookings: [],
@@ -29,14 +32,17 @@ const seed = async () => {
         ],
       },
       {
-        _id: "q7oELMr0HcNDJJkWbB1NJR73HvP2",
-        token: "token_************",
+        _id: new ObjectId("q7oELMr0HcNDJJkWbB1NJR73HvP2"),
+        accessToken: "token_************",
+        refreshToken: "token_************",
+        csrfToken: "token_************",
         first_name: "Kevin",
         last_name: "Le",
         avatar:
           "https://lh3.googleusercontent.com/a-/AOh14Ghxa2eTURMkPvkLHGujR9Qasqzw379EEje5taCX7g=s96-c",
         email: "bi.nhoc9x@gmail.com",
-        provider: LoginProvider.Google,
+        provider: LoginProvider.GOOGLE,
+        linkAccount: {},
         walletId: "kevinlethevu@gmail.com",
         income: 29000,
         bookings: [],
