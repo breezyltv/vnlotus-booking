@@ -80,16 +80,29 @@ export enum Gender {
   OTHER = "other",
 }
 
-export interface User {
+export interface GoogleAccount {
   _id: string;
+  email: string;
+  displayName: string;
+  token?: string;
+}
+
+export interface IProvider {
+  google?: LoginProvider | null;
+  email?: LoginProvider | null;
+}
+
+export interface User {
+  _id: ObjectId;
   accessToken: string;
   refreshToken: string;
   csrfToken: string;
   provider: LoginProvider;
+  linkAccount: IProvider;
   displayName?: string;
   first_name: string | null | undefined;
   last_name: string | null | undefined;
-  avatar: string;
+  avatar?: string;
   email: string;
   phone?: string;
   address?: string;
@@ -102,9 +115,8 @@ export interface User {
   rooms: ObjectId[];
   wishlist?: ObjectId[];
   authorized?: boolean;
-  local?: {
-    password: string;
-  };
+  password?: string;
+  google?: GoogleAccount;
 }
 
 export interface Profile {
@@ -161,6 +173,8 @@ export interface SkillsType {
 
 export interface Viewer {
   _id?: string;
+  email?: string;
+  displayName?: string;
   csrfToken?: string;
   avatar?: string;
   walletId?: string;

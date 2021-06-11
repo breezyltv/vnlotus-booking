@@ -4,6 +4,7 @@ export const SIGN_OUT = gql`
   mutation SignOut {
     signOut {
       id
+      email
       csrfToken
       displayName
       avatar

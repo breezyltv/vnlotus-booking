@@ -15,13 +15,20 @@ const address = yup.string().nullable().default("");
 const bio = yup.string().nullable().default("");
 const phoneRegExp =
   /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
-const phone = yup.string().matches(phoneRegExp, "Phone number is not valid");
+const phone = yup
+  .string()
+  .trim()
+  .nullable()
+  .notRequired()
+  .matches(phoneRegExp, "Phone number is not valid");
 const birthday = yup.date().nullable().notRequired().min(new Date(1940, 0, 1));
 const gender = yup
   .mixed()
+  .nullable()
+  .notRequired()
   // Note `as const`: this types the array as `["male", "female", "other"]`
   // instead of `string[]`.
-  .oneOf(["male", "female", "other"]);
+  .oneOf([null, "male", "female", "other"]);
 //.defined();
 export const UserUpdateRules = yup.object().shape({
   first_name,

@@ -10,6 +10,10 @@ export const USER_PROFILE = gql`
       last_name
       email
       provider
+      linkAccount {
+        google
+        email
+      }
       phone
       address
       birthday

@@ -100,7 +100,7 @@ export const SpinnerStyled = styled(Spin)`
 export const CustomInput = styled(Input)`
   border-radius: 3rem;
   padding: 8px 20px;
-  margin-top: 1rem;
+  //margin-top: 1rem;
 
   svg {
     margin-right: 5px;
@@ -113,7 +113,7 @@ export const CustomInput = styled(Input)`
 export const CustomInputPassword = styled(Input.Password)`
   border-radius: 3rem;
   padding: 8px 20px;
-  margin-top: 1rem;
+
   svg {
     margin-right: 5px;
   }

@@ -12,3 +12,7 @@ export interface RegisterArgs {
     login_type: LoginProvider;
   };
 }
+export interface SignInViaEmailArgs {
+  email: string;
+  password: string;
+}

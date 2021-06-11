@@ -8,6 +8,7 @@ import {
   SolutionOutlined,
   ShopOutlined,
   CaretDownOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Menu, Avatar, Dropdown } from "antd";
 import { MenuUserLink } from "../../styles";
@@ -48,41 +49,44 @@ export const RightNav = ({ mode, viewer, setViewer }: Props) => {
     signOut();
   };
 
-  const subRightMenu =
-    viewer.id && viewer.avatar ? (
-      <>
-        <Menu.Item key="setting">
-          <Dropdown
-            overlay={<AccountMenuSub mode={"vertical"} />}
-            trigger={["click"]}
-            placement="bottomRight"
-            arrow
-          >
-            <MenuUserLink onClick={(e) => e.preventDefault()}>
-              <Avatar size="small" src={viewer.avatar} />
-              <span>{upperCaseString(viewer.displayName)}</span>
-              <CaretDownOutlined />
-            </MenuUserLink>
-          </Dropdown>
-        </Menu.Item>
-        <Menu.Item
-          key="signOut"
-          icon={<LogoutOutlined />}
-          onClick={handleSignOut}
+  const subRightMenu = viewer.id ? (
+    <>
+      <Menu.Item key="setting">
+        <Dropdown
+          overlay={<AccountMenuSub mode={"vertical"} />}
+          trigger={["click"]}
+          placement="bottomRight"
+          arrow
         >
-          Sign Out
-        </Menu.Item>
-      </>
-    ) : (
-      <>
-        <Menu.Item key="signUp" icon={<SolutionOutlined />}>
-          <Link to="/signup">Sign Up</Link>
-        </Menu.Item>
-        <Menu.Item key="signIn" icon={<LoginOutlined />}>
-          <Link to="/signin">Sign In</Link>
-        </Menu.Item>
-      </>
-    );
+          <MenuUserLink onClick={(e) => e.preventDefault()}>
+            {viewer.avatar ? (
+              <Avatar size="small" src={viewer.avatar} />
+            ) : (
+              <Avatar size="small" icon={<UserOutlined />} />
+            )}
+            <span>{upperCaseString(viewer.displayName)}</span>
+            <CaretDownOutlined />
+          </MenuUserLink>
+        </Dropdown>
+      </Menu.Item>
+      <Menu.Item
+        key="signOut"
+        icon={<LogoutOutlined />}
+        onClick={handleSignOut}
+      >
+        Sign Out
+      </Menu.Item>
+    </>
+  ) : (
+    <>
+      <Menu.Item key="signUp" icon={<SolutionOutlined />}>
+        <Link to="/signup">Sign Up</Link>
+      </Menu.Item>
+      <Menu.Item key="signIn" icon={<LoginOutlined />}>
+        <Link to="/signin">Sign In</Link>
+      </Menu.Item>
+    </>
+  );
 
   return (
     <Menu mode={mode ? "inline" : "horizontal"}>

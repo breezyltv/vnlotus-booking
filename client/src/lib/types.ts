@@ -1,5 +1,6 @@
 export interface Viewer {
   id: string | null;
+  email: string | null;
   csrfToken: string | null;
   avatar: string | null;
   displayName: string | null;
@@ -17,6 +18,10 @@ export enum SettingLeftBarType {
 export interface YupError {
   path: string;
   message: string;
+}
+
+export interface IValidateMess {
+  [key: string]: string[];
 }
 
 export enum RoomType {

@@ -64,7 +64,7 @@ export interface UserListing_user_rooms {
 export interface UserListing_user {
   __typename: "User";
   id: string;
-  avatar: string;
+  avatar: string | null;
   displayName: string;
   first_name: string;
   last_name: string;

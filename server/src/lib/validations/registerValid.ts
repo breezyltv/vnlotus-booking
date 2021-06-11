@@ -1,10 +1,14 @@
 import * as yup from "yup";
 import { LoginProvider } from "../types";
-const email = yup.string().trim().email();
+const email = yup
+  .string()
+  .trim()
+  .required("Email is required!")
+  .email("Email must be a valid email");
 const first_name = yup
   .string()
   .trim()
-  .required("Fist name is required!")
+  .required("Fisrt name is required!")
   .min(2, "First name must be at least 2 characters!");
 
 const last_name = yup
