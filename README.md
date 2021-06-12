@@ -1,7 +1,11 @@
-## A MERN stack app + Apollo graphQL + Docker project.
+## A MERN stack app + Apollo graphQL + Docker + nginx project.
 
 - Lotus Homestays is a simple project to view and book a homestays or hotel for vacation rentals, and tourism activities
-
+## :building_construction: Project is under construction.
+- Demo: http://thevu.me/
+- My Online Resume: http://thevu.me/about
+- GIF:
+  ![alt text](https://github.com/breezyltv/vnlotus-booking/blob/master/demo/demo_lotus.gif?raw=true)
 ## Technologies - Features:
 
 - Written in Typescript from front end to back end.
@@ -29,22 +33,26 @@
 - Functional component
 - UI framework: Ant Design
 - Styled Components: help customize antd's components
-- Apollo client
+- Private route: protect private components
+- Context Api: store an user's identity to global state.
 - Using sessionStorage to store CSRF token / set CSRF token in headers for request
-- apollo-link-token-refresh: an Apollo Link middleware to call refeshToken api to handle expired access token and CSRF Token before do others authorized requests :white_check_mark:
+- Apollo client:
+  - Hooks with useQuery and useMutation
+  - Apollo-Link: a link chain to customize the flow of data between Apollo clietn and graphQl server.
+  - apollo-link-token-refresh: an Apollo Link middleware to call refreshToken api to handle expired access token and CSRF Token before do others authorized requests :white_check_mark:
 - RxJS: handling dynamic search with debounce. (planning for practicing) :building_construction:
 
 ### DevOps:
 - Github :white_check_mark:
 - Docker :white_check_mark:
 - Nginx :white_check_mark:
-- Deploy to DigitalOcean :hammer_and_wrench:
+- Deploy to DigitalOcean Droplets :white_check_mark:
 
 ## Available Scripts
 
 Clone project and in the project directories, you can run this command for each folders (client and server):
 
-### 'npm install'
+### 'yarn install'
 
 ## :gear: Config:
 ### You need to step up environment variables in .env
@@ -76,6 +84,6 @@ Clone project and in the project directories, you can run this command for each 
 - GraphQL API in Production:\
   Open [http://localhost:8080/graphql](http://localhost:8080/graphql)
 
-# :building_construction: Demo:
-
-- coming soon
+## My Online Resume Screenshot
+* URL: http://thevu.me/about
+![alt text](https://github.com/breezyltv/vnlotus-booking/blob/master/demo/my_resume.png?raw=true)

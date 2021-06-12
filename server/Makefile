@@ -4,8 +4,11 @@ ifneq (,$(wildcard ./.env))
 	ENV_FILE_PARAM = --env-file .env
 endif
 
-build:
+build-dev:
 	docker-compose up --build --remove-orphans
+
+build-prod:
+	docker-compose -f ../docker-compose.prod.yml up --build --remove-orphans
 
 up:
 	docker-compose up
