@@ -1,2 +1,4 @@
 ./server/.env
 ./server/lib/config/keys.ts
+./server/build
+./client/build
