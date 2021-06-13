@@ -82,13 +82,7 @@ export const LoginForm = ({
           rules={
             isShowBackendError
               ? []
-              : [
-                  { required: true, message: "Please input your password!" },
-                  {
-                    min: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                ]
+              : [{ required: true, message: "Please input your password!" }]
           }
           required
           hasFeedback

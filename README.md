@@ -4,7 +4,7 @@
 ## :building_construction: Project is under construction.
 - Demo: http://thevu.me/
 - My Online Resume: http://thevu.me/about
-- GIF:
+- GIF:\
   ![alt text](https://github.com/breezyltv/vnlotus-booking/blob/master/demo/demo_lotus.gif?raw=true)
 ## Technologies - Features:
 
