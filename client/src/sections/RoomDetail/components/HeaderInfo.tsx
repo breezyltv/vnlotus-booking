@@ -1,22 +1,29 @@
 import { Typography, Button, Rate } from "antd";
 import { EnvironmentOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { InfoDiv } from "../styles";
-
+import { RoomDetail_room as IRoom } from "../../../lib/api/graphql/queries";
 const { Text, Title } = Typography;
-export const HeaderInfo = () => {
+
+interface Props {
+  roomDetail: IRoom;
+}
+
+export const HeaderInfo = ({ roomDetail }: Props) => {
   return (
     <InfoDiv direction="vertical">
-      <Title level={1}>Nha Trang Apartment in Champa</Title>
-      <Rate disabled allowHalf defaultValue={4.5} />
+      <Title level={1}>{roomDetail.title}</Title>
+      <Rate disabled allowHalf defaultValue={roomDetail.rating} />
       <Text>
-        <EnvironmentOutlined /> Nha Trang, Khánh Hòa, Vietnam
+        <EnvironmentOutlined /> {roomDetail.city}, {roomDetail.country}
         <Button type="link">View on Map</Button>
       </Text>
       <Text>
         <InfoCircleOutlined /> Other · 32 m2
       </Text>
       <Text>
-        Private room · 1 Bathroom · 1 bed · 1 room · 2 guests (max 2 guests)
+        Private room · {roomDetail.numOfBaths} Bathroom · {roomDetail.numOfBeds}{" "}
+        bed · {roomDetail.numOfGuests} guests (max {roomDetail.numOfGuests}{" "}
+        guests)
       </Text>
     </InfoDiv>
   );

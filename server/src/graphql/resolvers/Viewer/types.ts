@@ -1,8 +1,8 @@
-import { LoginProvider } from "../../../lib/types";
-export interface SignInArgs {
+import { LoginProvider, User, Viewer } from "../../../lib/types";
+export interface ISignInArgs {
   input: { code: string } | null;
 }
-export interface RegisterArgs {
+export interface IRegisterArgs {
   user: {
     email: string;
     first_name: string;
@@ -12,7 +12,7 @@ export interface RegisterArgs {
     login_type: LoginProvider;
   };
 }
-export interface SignInViaEmailArgs {
+export interface ISignInViaEmailArgs {
   email: string;
   password: string;
 }

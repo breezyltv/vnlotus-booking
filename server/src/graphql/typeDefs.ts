@@ -52,16 +52,23 @@ export const typeDefs = gql`
     main: String!
     collection: [String!]
   }
-
+  type HostInfo {
+    _id: String!
+    email: String!
+    displayName: String!
+    avatar: String
+    phone: String
+  }
   type Room {
     _id: ID!
     title: String!
     description: String!
     image: Pictures
-    host: User!
+    host: HostInfo!
     type: RoomType!
     address: String!
     city: String!
+    country: String!
     bookings(limit: Int!, page: Int!): Bookings
     bookingsIndex: String!
     price: Float!

@@ -11,24 +11,27 @@ import {
   RoomsData,
   RoomsQuery,
   RoomsFilter,
+  IRoomHostInfo,
 } from "./types";
+import { logger } from "../../../lib/utils";
 export const roomResolvers: IResolvers = {
   Query: {
     room: async (
       _root: undefined,
       { id }: RoomArgs,
-      { db, req }: { db: Database; req: Request }
+      { db }: { db: Database }
     ): Promise<Room> => {
       try {
+        logger("[room] id", id);
         const room = await db.rooms.findOne({ _id: new ObjectId(id) });
         if (!room) {
           throw new Error("No room be found!");
         }
         // check if request is authorized
-        const viewer = await authorizeAccessToken(db, req);
-        if (viewer && viewer._id.toHexString() === room.host) {
-          room.authorized = true;
-        }
+        // const viewer = await authorizeAccessToken(db, req);
+        // if (viewer && viewer._id.toHexString() === room.host) {
+        //   room.authorized = true;
+        // }
         return room;
       } catch (error) {
         throw new Error(`Failed to get the room: ${error}`);
@@ -59,13 +62,23 @@ export const roomResolvers: IResolvers = {
       room: Room,
       _args: {},
       { db }: { db: Database }
-    ): Promise<User> => {
+    ): Promise<IRoomHostInfo> => {
       try {
         const host = await db.users.findOne({ _id: new ObjectId(room.host) });
         if (!host) {
           throw new Error("Host could not be found!");
         }
-        return host;
+        const displayName = host.displayName
+          ? host.displayName
+          : host.first_name + " " + host.last_name;
+        const hostData = {
+          _id: host._id.toHexString(),
+          displayName,
+          email: host.email,
+          avatar: host.avatar ? host.avatar : null,
+          phone: host.phone ? host.phone : null,
+        };
+        return hostData;
       } catch (error) {
         throw new Error(`Failed to get the host: ${error}`);
       }

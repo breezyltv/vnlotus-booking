@@ -15,7 +15,7 @@ RUN apk add --update python3 make g++\
     && rm -rf /var/cache/apk/*
 
 # Install dependencies and clear npm cache
-RUN npm install && npm cache clean --force
+RUN yarn install && yarn cache clean --force
 
 COPY . .
 
@@ -23,4 +23,4 @@ COPY . .
 EXPOSE 5000
 
 # default dev command
-CMD [ "npm", "run", "server" ]
+CMD [ "yarn", "run", "server" ]
