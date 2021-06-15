@@ -5,8 +5,14 @@ import { WishlistButton } from "../../Common/styles";
 import { colorSchemes } from "../../../styles";
 import { RoomHeaderDiv } from "../styles";
 import { UserOutlined, HeartFilled, HeartOutlined } from "@ant-design/icons";
+import { RoomDetail } from "../../../lib/api/graphql/queries";
 const { Text, Title } = Typography;
-export const RoomHeader = () => {
+
+interface Props {
+  roomDetail: RoomDetail | undefined;
+}
+
+export const RoomHeader = ({ roomDetail }: Props) => {
   const [wishlist, setWishlist] = useState(false);
   const handleWishlist = () => {
     setWishlist(!wishlist);
@@ -14,14 +20,25 @@ export const RoomHeader = () => {
   return (
     <RoomHeaderDiv>
       <Space>
-        <Link to="/host/:id">
-          <Avatar shape="square" size={64} icon={<UserOutlined />} />
+        <Link to={`/host/${roomDetail?.room?.host._id}`}>
+          {roomDetail?.room.host.avatar ? (
+            <Avatar
+              shape="square"
+              size={64}
+              src={roomDetail?.room.host.avatar}
+            />
+          ) : (
+            <Avatar shape="square" size={64} icon={<UserOutlined />} />
+          )}
         </Link>
         <Space direction="vertical">
           <Text>
-            Listed By: <Link to="/host/:id">Vu Le</Link>
+            Listed By:{" "}
+            <Link to={`/host/${roomDetail?.room?.host._id}`}>
+              {roomDetail?.room?.host.displayName}
+            </Link>
           </Text>
-          <Text>Listings: 10</Text>
+          <Text>Contact: {roomDetail?.room?.host.email}</Text>
         </Space>
       </Space>
       <Text>

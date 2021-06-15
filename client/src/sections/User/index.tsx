@@ -17,18 +17,17 @@ import {
   LinkAccount,
   InfoLeftBar,
 } from "./components";
-import { PageSkeleton } from "../../lib/components";
 import { SettingLeftBarType } from "../../lib/types";
-import { ErrorBanner } from "../../lib/components";
+import { ErrorBanner, PageSkeleton } from "../../lib/components";
 
 // interface IdMatchParams {
 //   id: string;
 // }
 
-interface MatchParams {
+interface IMatchParams {
   [x: string]: string | undefined;
 }
-interface Props extends RouteComponentProps<MatchParams> {
+interface Props extends RouteComponentProps<IMatchParams> {
   selectedKeys: SettingLeftBarType;
 }
 
@@ -47,7 +46,7 @@ export const User = ({ selectedKeys, match }: Props) => {
     error: getUserProfileError,
   } = useQuery<UserType, UserVariables>(USER_PROFILE, {
     variables: {
-      id: viewer.id ? viewer.id : "",
+      id: match.params.id ? match.params.id : "",
     },
     onError: (error) => {
       console.log(error);

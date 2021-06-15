@@ -8,13 +8,19 @@ import {
   PriceBarDiv,
 } from "../styles";
 import { CustomButton } from "../../../styles";
+import { RoomDetail } from "../../../lib/api/graphql/queries";
 const { RangePicker } = DatePicker;
 const { Meta } = RequestBookingCard;
 const { Text } = Typography;
 const dateFormatList = ["MM/DD/YYYY", "MM/DD/YY"];
-export const RequestBooking = () => {
+
+interface Props {
+  roomDetail: RoomDetail;
+}
+
+export const RequestBooking = ({ roomDetail }: Props) => {
   //const [openDatePicker, setOpenDatePicker] = useState(false);
-  const initPrice = 69;
+  const initPrice = roomDetail.room.price;
   const [price, setPrice] = useState(initPrice);
   const handleDatePicker = (date: any, dateString: [string, string]) => {
     console.log(date, dateString);
@@ -55,7 +61,11 @@ export const RequestBooking = () => {
             }
             dateRender={(current) => {
               const oneNight =
-                current > moment().endOf("day") ? <Text>$69</Text> : "";
+                current > moment().endOf("day") ? (
+                  <Text>${initPrice}</Text>
+                ) : (
+                  ""
+                );
               return (
                 <div
                   className="ant-picker-cell-inner"

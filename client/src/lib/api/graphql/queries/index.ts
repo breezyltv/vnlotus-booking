@@ -6,3 +6,5 @@ export * from "./User";
 export * from "./User/__generated__/User";
 export * from "./UserListings/";
 export * from "./UserListings/__generated__/UserListing";
+export * from "./Room";
+export * from "./Room/__generated__/RoomDetail";

@@ -24,7 +24,7 @@ export interface TokenUserData {
 }
 
 export interface ITokenUser {
-  data: TokenUserData;
+  data: Viewer;
   iat: number;
   exp: number;
 }
@@ -94,9 +94,9 @@ export interface IProvider {
 
 export interface User {
   _id: ObjectId;
-  accessToken: string;
-  refreshToken: string;
-  csrfToken: string;
+  accessToken?: string;
+  refreshToken?: string;
+  csrfToken?: string;
   provider: LoginProvider;
   linkAccount: IProvider;
   displayName?: string;

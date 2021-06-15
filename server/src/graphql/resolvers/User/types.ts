@@ -1,39 +1,39 @@
 import { Booking, Room } from "../../../lib/types";
 import { User, YupError } from "../../../lib/types";
-export interface UserArgs {
+export interface IUserArgs {
   id: string;
 }
 
-export interface UserBookingArgs {
+export interface IUserBookingArgs {
   limit: number;
   page: number;
 }
 
-export interface UserBookingsData {
+export interface IUserBookingsData {
   total: number;
   result: Booking[];
 }
 
-export interface UserRoomsArgs {
+export interface IUserRoomsArgs {
   limit: number;
   page: number;
 }
 
-export interface UserRoomsData {
+export interface IUserRoomsData {
   total: number;
   result: Room[];
 }
 
-export interface UserUpdateArgs {
+export interface IUserUpdateArgs {
   user: User;
 }
-export interface LinkLocalAccountArgs {
+export interface ILinkLocalAccountArgs {
   email: string;
   password: string;
   confirm_password: string;
 }
 
-export interface UserUpdateReturnType {
+export interface IUserUpdateReturnType {
   data: User | null;
   errors: YupError[] | null;
 }

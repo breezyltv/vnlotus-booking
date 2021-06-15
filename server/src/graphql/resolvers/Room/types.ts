@@ -35,3 +35,11 @@ export interface RoomsQuery {
   admin?: string;
   city?: string;
 }
+
+export interface IRoomHostInfo {
+  _id: string;
+  displayName: string | null;
+  email: string;
+  avatar: string | null;
+  phone: string | null;
+}

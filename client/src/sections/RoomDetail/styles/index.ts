@@ -8,6 +8,12 @@ export const RoomContainer = styled.div`
   padding: 0 1rem;
 `;
 
+export const SpinDiv = styled.div`
+  padding: 8rem 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.05);
+`;
+
 export const CarouselRoomStyled = styled(Carousel)`
   background-color: #2f3640;
   padding: 4px 0;

@@ -4,7 +4,7 @@ import { argon2i } from "argon2-ffi";
 import jwt from "jsonwebtoken";
 import { keys } from "../config/keys";
 import { logger } from "../utils/";
-import { Database, User, TokenUserData, ITokenUser } from "../types";
+import { Database, User, TokenUserData, ITokenUser, Viewer } from "../types";
 import util from "util";
 import base64url from "base64url";
 import { ForbiddenError } from "apollo-server-errors";
@@ -116,7 +116,7 @@ export const authorizeRefreshToken = async (
 };
 
 export const generateToken = (
-  user: TokenUserData,
+  user: Viewer,
   secretSignature: string,
   tokenLife: string | number
 ): Promise<string | undefined> => {
@@ -155,7 +155,7 @@ export const verifyToken = async (
 };
 
 export const generateBothTokens = async (
-  viewerData: TokenUserData,
+  viewerData: Viewer,
   accessTokenExp: number
 ): Promise<IBothTokens> => {
   try {

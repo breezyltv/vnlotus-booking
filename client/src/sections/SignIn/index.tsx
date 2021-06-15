@@ -94,9 +94,16 @@ export const SignIn = ({ viewer, setViewer }: Props) => {
           );
         }
       },
-      onError: (error) => {
-        console.log("[register] error", error);
-        displayErrorNotification(error.message);
+      onError: ({ graphQLErrors }) => {
+        //console.log("[register] error", graphQLErrors);
+        if (graphQLErrors) {
+          for (let err of graphQLErrors) {
+            switch (err.extensions && err.extensions.code) {
+              case "GRAPHQL_VALIDATION_FAILED":
+                displayErrorNotification(err.message);
+            }
+          }
+        }
       },
     }
   );
@@ -161,10 +168,9 @@ export const SignIn = ({ viewer, setViewer }: Props) => {
   if (viewer.csrfToken) {
     return <Redirect to={`/user/edit-account/profile/${viewer.id}`} />;
   }
-  const signInErrorBanner =
-    signInError || signInViaEmailError ? (
-      <ErrorBanner description="Sorry! We weren't able to sign you in. Please try again later!" />
-    ) : null;
+  const signInErrorBanner = signInError ? (
+    <ErrorBanner description="Sorry! We weren't able to sign you in. Please try again later!" />
+  ) : null;
 
   return (
     <>

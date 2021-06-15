@@ -247,8 +247,8 @@ const App = () => {
       },
 
       onError: (error) => {
-        setViewer(initViewer);
-        sessionStorage.removeItem("csrfToken");
+        //setViewer(initViewer);
+        //sessionStorage.removeItem("csrfToken");
         console.log(error);
       },
     }

@@ -5,14 +5,14 @@ import { Database, LoginProvider, User } from "../../../lib/types";
 import { formatYupError, logger } from "../../../lib/utils";
 import { authorizeAccessToken, hashPassword } from "../../../lib/auth";
 import {
-  UserArgs,
-  UserUpdateArgs,
-  UserUpdateReturnType,
-  UserBookingArgs,
-  UserBookingsData,
-  UserRoomsArgs,
-  UserRoomsData,
-  LinkLocalAccountArgs,
+  IUserArgs,
+  IUserUpdateArgs,
+  IUserUpdateReturnType,
+  IUserBookingArgs,
+  IUserBookingsData,
+  IUserRoomsArgs,
+  IUserRoomsData,
+  ILinkLocalAccountArgs,
   ILinkLocalAccount,
 } from "./types";
 import { Request } from "express";
@@ -25,28 +25,41 @@ export const userResolvers: IResolvers = {
   Query: {
     user: async (
       _root: undefined,
-      { id }: UserArgs,
+      { id }: IUserArgs,
       { db, req }: { db: Database; req: Request }
     ): Promise<User> => {
       try {
         // check if request is authorized
         const viewer = await authorizeAccessToken(db, req);
+
         if (!viewer) {
-          throw new Error(
+          throw new AuthenticationError(
             "This request is not authorized to perform this operation!"
           );
         }
-        const user = await db.users.findOne({ _id: new ObjectId(id) });
-        if (!user) {
+
+        if (viewer && viewer._id.toHexString() === id) {
+          viewer.authorized = true;
+        } else {
           throw new Error("No matching user found!");
         }
 
-        if (viewer && viewer._id === user._id) {
-          user.authorized = true;
-        }
+        // const user = await db.users.findOne({ _id: new ObjectId(id) });
+
+        // if (!user) {
+        //   throw new Error("No matching user found!");
+        // }
+
+        // if (viewer && viewer._id === user._id) {
+        //   user.authorized = true;
+        // } else {
+        //   throw new AuthenticationError(
+        //     "This request is not authorized to perform this operation!"
+        //   );
+        // }
         //logger("[User] viewer", viewer);
         //logger("[User] UserInputs", user);
-        return user;
+        return viewer;
       } catch (error) {
         logger("[User] Failed to query user!", error);
         throw error;
@@ -56,9 +69,9 @@ export const userResolvers: IResolvers = {
   Mutation: {
     updateUser: async (
       _root: undefined,
-      { user }: UserUpdateArgs,
+      { user }: IUserUpdateArgs,
       { db, req }: { db: Database; req: Request }
-    ): Promise<UserUpdateReturnType> => {
+    ): Promise<IUserUpdateReturnType> => {
       //logger(user);
       try {
         //check if birthday is different the default
@@ -124,7 +137,7 @@ export const userResolvers: IResolvers = {
     },
     linkLocalAccount: async (
       _root: undefined,
-      { email, password, confirm_password }: LinkLocalAccountArgs,
+      { email, password, confirm_password }: ILinkLocalAccountArgs,
       { db, req }: { db: Database; req: Request }
     ): Promise<ILinkLocalAccount> => {
       try {
@@ -197,14 +210,14 @@ export const userResolvers: IResolvers = {
     },
     bookings: async (
       user: User,
-      { limit, page }: UserBookingArgs,
+      { limit, page }: IUserBookingArgs,
       { db }: { db: Database }
-    ): Promise<UserBookingsData | null> => {
+    ): Promise<IUserBookingsData | null> => {
       try {
         if (!user.authorized) {
           return null;
         }
-        const data: UserBookingsData = {
+        const data: IUserBookingsData = {
           total: 0,
           result: [],
         };
@@ -224,11 +237,11 @@ export const userResolvers: IResolvers = {
     },
     rooms: async (
       user: User,
-      { limit, page }: UserRoomsArgs,
+      { limit, page }: IUserRoomsArgs,
       { db }: { db: Database }
-    ): Promise<UserRoomsData | null> => {
+    ): Promise<IUserRoomsData | null> => {
       try {
-        const data: UserRoomsData = {
+        const data: IUserRoomsData = {
           total: 0,
           result: [],
         };

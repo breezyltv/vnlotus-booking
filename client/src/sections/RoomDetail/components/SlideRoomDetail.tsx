@@ -1,14 +1,59 @@
 import { Image, Typography, Space, Spin } from "antd";
 import { CarouselRoomStyled } from "../styles";
 
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import {
+  LeftOutlined,
+  RightOutlined,
+  PictureOutlined,
+} from "@ant-design/icons";
+import { RoomDetail } from "../../../lib/api/graphql/queries";
 
-export const SlideRoomDetail = () => {
+interface Props {
+  roomDetail: RoomDetail;
+}
+
+const slidesToShow = 3;
+
+export const SlideRoomDetail = ({ roomDetail }: Props) => {
+  const collection = roomDetail.room.image?.collection;
+  const mainSlide = [];
+
+  if (!collection) {
+    for (let i = 0; i < slidesToShow + 1; i++) {
+      mainSlide.push(
+        <Image
+          alt={roomDetail.room?.title}
+          src={roomDetail.room?.image?.main}
+          preview={false}
+        />
+      );
+    }
+  } else {
+    mainSlide.push(
+      <Image
+        alt={roomDetail.room?.title}
+        src={roomDetail.room?.image?.main}
+        preview={false}
+      />
+    );
+  }
+
+  const gallery =
+    collection &&
+    collection.map((image, idx) => (
+      <Image
+        key={idx}
+        alt={roomDetail.room?.title}
+        src={image}
+        preview={false}
+      />
+    ));
+
   return (
     <CarouselRoomStyled
       //autoplay
       //speed={500}
-      lazyLoad="progressive"
+      lazyLoad="ondemand"
       dots
       dotPosition="bottom"
       prevArrow={<LeftOutlined />}
@@ -42,31 +87,8 @@ export const SlideRoomDetail = () => {
         },
       ]}
     >
-      <Image
-        alt="1"
-        src="https://cdn.luxstay.com/rooms/25418/large/room_25418_51_1562063937.jpg"
-        preview={false}
-      />
-      <Image
-        alt="1"
-        src="https://cdn.luxstay.com/rooms/25418/large/room_25418_51_1562063937.jpg"
-        preview={false}
-      />
-      <Image
-        alt="1"
-        src="https://cdn.luxstay.com/users/208376/Oy17y9GoAcWL1DOPses8zVSR.jpeg"
-        preview={false}
-      />
-      <Image
-        alt="1"
-        src="https://cdn.luxstay.com/rooms/25418/large/room_25418_51_1562063937.jpg"
-        preview={false}
-      />
-      <Image
-        alt="1"
-        src="https://cdn.luxstay.com/rooms/25418/large/room_25418_51_1562063937.jpg"
-        preview={false}
-      />
+      {mainSlide}
+      {gallery}
     </CarouselRoomStyled>
   );
 };
